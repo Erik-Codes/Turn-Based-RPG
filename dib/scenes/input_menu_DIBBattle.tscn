@@ -1,0 +1,310 @@
+[gd_scene load_steps=8 format=3 uid="uid://b4b440gcmclfp"]
+
+[ext_resource type="Script" uid="uid://c4lu0pgs6crl0" path="res://scripts/battle_input_menu.gd" id="1_8wulf"]
+[ext_resource type="Script" uid="uid://coh28m2dpl8dt" path="res://scripts/grid_button.gd" id="2_e2sxy"]
+[ext_resource type="Texture2D" uid="uid://i35v1qcxsl2o" path="res://graphics/test/rightarr.png" id="3_e2kc2"]
+[ext_resource type="Texture2D" uid="uid://daumvxt1s6ro8" path="res://graphics/test/leftarr.png" id="4_r5sw4"]
+[ext_resource type="FontFile" uid="uid://bqsbg747cxhvw" path="res://graphics/fonts/IMFellEnglishSC-Regular.ttf" id="4_y5r7c"]
+[ext_resource type="Texture2D" uid="uid://bhf8l1miam2aw" path="res://graphics/test/uparr.png" id="5_y5r7c"]
+[ext_resource type="Texture2D" uid="uid://b432we66u15tt" path="res://graphics/test/downarr.png" id="6_ok0r1"]
+
+[node name="Battle_input_menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8wulf")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.22
+anchor_top = 0.7
+anchor_right = 0.78
+anchor_bottom = 0.98
+offset_right = -6.1035156e-05
+offset_bottom = 6.1035156e-05
+grow_horizontal = 2
+grow_vertical = 2
+columns = 4
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch_mode = 3
+
+[node name="Control" type="Control" parent="GridContainer/AspectRatioContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("2_e2sxy")
+
+[node name="Button" type="TextureButton" parent="GridContainer/AspectRatioContainer/Control"]
+texture_filter = 4
+custom_minimum_size = Vector2(176, 89)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -88.0
+offset_right = 88.0
+offset_bottom = 89.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("3_e2kc2")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="GridContainer/AspectRatioContainer/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -88.0
+offset_top = -11.5
+offset_right = 88.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("4_y5r7c")
+theme_override_font_sizes/font_size = 27
+text = "testing 123"
+horizontal_alignment = 1
+
+[node name="Label6" type="Label" parent="GridContainer/AspectRatioContainer/Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.87
+anchor_right = 0.5
+anchor_bottom = 0.88
+offset_left = -88.0
+offset_top = -23.0
+offset_right = 88.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("4_y5r7c")
+theme_override_font_sizes/font_size = 27
+text = "TU:876"
+horizontal_alignment = 1
+
+[node name="AspectRatioContainer2" type="AspectRatioContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch_mode = 3
+
+[node name="Control2" type="Control" parent="GridContainer/AspectRatioContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("2_e2sxy")
+
+[node name="Button" type="TextureButton" parent="GridContainer/AspectRatioContainer2/Control2"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -88.0
+offset_right = 88.0
+offset_bottom = 89.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("4_r5sw4")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="GridContainer/AspectRatioContainer2/Control2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -88.0
+offset_top = -11.5
+offset_right = 88.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("4_y5r7c")
+theme_override_font_sizes/font_size = 27
+text = "testing 123"
+horizontal_alignment = 1
+
+[node name="Label6" type="Label" parent="GridContainer/AspectRatioContainer2/Control2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.87
+anchor_right = 0.5
+anchor_bottom = 0.88
+offset_left = -88.0
+offset_top = -23.0
+offset_right = 88.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("4_y5r7c")
+theme_override_font_sizes/font_size = 27
+text = "TU:876"
+horizontal_alignment = 1
+
+[node name="AspectRatioContainer3" type="AspectRatioContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch_mode = 3
+
+[node name="Control3" type="Control" parent="GridContainer/AspectRatioContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("2_e2sxy")
+
+[node name="Button" type="TextureButton" parent="GridContainer/AspectRatioContainer3/Control3"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -88.0
+offset_right = 88.0
+offset_bottom = 89.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("5_y5r7c")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="GridContainer/AspectRatioContainer3/Control3"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -88.0
+offset_top = -11.5
+offset_right = 88.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("4_y5r7c")
+theme_override_font_sizes/font_size = 27
+text = "testing 123"
+horizontal_alignment = 1
+
+[node name="Label6" type="Label" parent="GridContainer/AspectRatioContainer3/Control3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.87
+anchor_right = 0.5
+anchor_bottom = 0.88
+offset_left = -88.0
+offset_top = -23.0
+offset_right = 88.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("4_y5r7c")
+theme_override_font_sizes/font_size = 27
+text = "TU:876"
+horizontal_alignment = 1
+
+[node name="AspectRatioContainer4" type="AspectRatioContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch_mode = 3
+
+[node name="Control4" type="Control" parent="GridContainer/AspectRatioContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("2_e2sxy")
+
+[node name="Button" type="TextureButton" parent="GridContainer/AspectRatioContainer4/Control4"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -88.0
+offset_right = 88.0
+offset_bottom = 89.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("6_ok0r1")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="GridContainer/AspectRatioContainer4/Control4"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -88.0
+offset_top = -11.5
+offset_right = 88.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("4_y5r7c")
+theme_override_font_sizes/font_size = 27
+text = "testing 123"
+horizontal_alignment = 1
+
+[node name="Label6" type="Label" parent="GridContainer/AspectRatioContainer4/Control4"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.87
+anchor_right = 0.5
+anchor_bottom = 0.88
+offset_left = -88.0
+offset_top = -23.0
+offset_right = 88.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("4_y5r7c")
+theme_override_font_sizes/font_size = 27
+text = "TU:876"
+horizontal_alignment = 1
+
+[connection signal="press" from="GridContainer/AspectRatioContainer/Control" to="GridContainer/AspectRatioContainer/Control" method="_on_press"]
+[connection signal="pressed" from="GridContainer/AspectRatioContainer/Control/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="GridContainer/AspectRatioContainer/Control/Button" to="GridContainer/AspectRatioContainer/Control" method="_on_button_pressed"]
+[connection signal="press" from="GridContainer/AspectRatioContainer2/Control2" to="GridContainer/AspectRatioContainer2/Control2" method="_on_press"]
+[connection signal="pressed" from="GridContainer/AspectRatioContainer2/Control2/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="GridContainer/AspectRatioContainer2/Control2/Button" to="GridContainer/AspectRatioContainer2/Control2" method="_on_button_pressed"]
+[connection signal="press" from="GridContainer/AspectRatioContainer3/Control3" to="GridContainer/AspectRatioContainer3/Control3" method="_on_press"]
+[connection signal="pressed" from="GridContainer/AspectRatioContainer3/Control3/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="GridContainer/AspectRatioContainer3/Control3/Button" to="GridContainer/AspectRatioContainer3/Control3" method="_on_button_pressed"]
+[connection signal="press" from="GridContainer/AspectRatioContainer4/Control4" to="GridContainer/AspectRatioContainer4/Control4" method="_on_press"]
+[connection signal="pressed" from="GridContainer/AspectRatioContainer4/Control4/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="GridContainer/AspectRatioContainer4/Control4/Button" to="GridContainer/AspectRatioContainer4/Control4" method="_on_button_pressed"]

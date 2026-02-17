@@ -1,0 +1,89 @@
+[gd_scene load_steps=7 format=3 uid="uid://8s0ddql1ksxs"]
+
+[ext_resource type="Script" uid="uid://c3g2pd8qcpsdy" path="res://scripts/monster_stats.gd" id="1_ch8vr"]
+[ext_resource type="FontFile" uid="uid://bqsbg747cxhvw" path="res://graphics/fonts/IMFellEnglishSC-Regular.ttf" id="3_1kvfr"]
+[ext_resource type="Texture2D" uid="uid://u7q8kcdhfiih" path="res://graphics/test/othergreyhp.png" id="4_esogn"]
+[ext_resource type="Texture2D" uid="uid://b37lbyqdschja" path="res://graphics/test/progtexture.png" id="4_ge8pu"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1kvfr"]
+
+[sub_resource type="Theme" id="Theme_esogn"]
+
+[node name="MonsterStats" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ch8vr")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -39.0
+offset_right = 100.0
+offset_bottom = 39.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_1kvfr")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="Control" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+texture_filter = 4
+layout_mode = 0
+offset_right = 180.0
+offset_bottom = 39.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 12
+theme_override_fonts/font = ExtResource("3_1kvfr")
+theme_override_font_sizes/font_size = 30
+text = "Monster"
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="TextureProgressBar" parent="PanelContainer/MarginContainer/VBoxContainer"]
+texture_filter = 4
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 0
+offset_top = 43.0
+offset_right = 180.0
+offset_bottom = 58.0
+value = 100.0
+nine_patch_stretch = true
+texture_progress = ExtResource("4_ge8pu")
+tint_progress = Color(1, 1, 1, 0.43137255)
+
+[node name="ProgressBar2" type="TextureProgressBar" parent="PanelContainer/MarginContainer/VBoxContainer"]
+texture_filter = 4
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 0
+offset_top = 43.0
+offset_right = 180.0
+offset_bottom = 58.0
+theme = SubResource("Theme_esogn")
+value = 100.0
+nine_patch_stretch = true
+texture_progress = ExtResource("4_ge8pu")
+
+[node name="Sprite2D" type="Sprite2D" parent="PanelContainer/MarginContainer"]
+texture_filter = 4
+position = Vector2(99.545, 60.39)
+scale = Vector2(-0.246, 0.26)
+texture = ExtResource("4_esogn")
+
+[connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/ProgressBar" to="." method="_on_progress_bar_value_changed"]

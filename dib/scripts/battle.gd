@@ -1,6 +1,6 @@
 extends Control
 
-enum TargetMode { NONE, ENEMY, ALLY, SELF }
+enum TargetMode {NONE, ENEMY, ALLY, SELF, CAPTURE}
 
 var pending_attack: Global.Attack = -1
 var target_mode: TargetMode = TargetMode.NONE
@@ -32,7 +32,7 @@ var _queue_hp_tweens: Dictionary = {} #uid -> Tween
 var _busy_count: int = 0
 signal battle_idle
 
-
+#prevent certain actions (e.g. starting turns too early)
 func _begin_busy() -> void:
 	_busy_count += 1
 
@@ -55,10 +55,15 @@ func _new_uid() -> int:
 	return _uid_counter
 
 func _ready():
+	_uid_counter=0
+	_uid_to_handler.clear()
+	_uid_to_stats.clear()
+	_enemy_entries.clear()
 	$"battle menu".hide()
 	$Turn_order.hide()
 	player_setup()
 	enemy_setup()
+	await ScreenTransition.fade_in(0.5)
 	await play_enemy_drop_in_sequence(visible_count)
 	order_setup()
 	await get_tree().process_frame
@@ -68,22 +73,45 @@ func _ready():
 	start_next_turn()
 
 func player_setup():
-	for i in range(4):
-		var plyr = "PlayerHandler" if i == 0 else "PlayerHandler%d" % (i + 1)
-		var handler = $Players/HB.get_node(plyr)
-		handler.get_node("Player").modulate = Color(1.0, 1.0, 1.0, 1.0)
-		if i>(Global.monsters.size()-1):
-			handler.get_node("Player").texture = load("res://graphics/test/green_hatchling-resized-to-210x263-removebg-preview.png")
-			handler.get_node("Player").modulate = Color(0,0,0,0)
-			handler.get_node("PlayerStats").hide()
+	#Reset all 4 slots to empty
+	for slot in range(4):
+		var plyr := "PlayerHandler%d" % (slot)
+		var handler: Control = $Players/HB.get_node(plyr)
+		#Empty placeholder
+		handler.get_node("Player").texture = load("res://graphics/test/green_hatchling-resized-to-210x263-removebg-preview.png")
+		handler.get_node("Player").modulate = Color(0, 0, 0, 0) # hidden
+		handler.get_node("PlayerStats").hide()
+		handler.get_node("Label").hide()
+	#Fill slots 0..party.size-1 only (NO compressing)
+	for slot in range(min(4, GameState.party.size())):
+		var plyr := "PlayerHandler%d" % (slot)
+		var handler: Control = $Players/HB.get_node(plyr)
+		var monster_uid: int = GameState.party[slot]  # party stores instance uids
+		var inst: Dictionary = GameState.roster.get(monster_uid, {})
+		if inst.is_empty():
+			#leave as empty placeholder
 			continue
-		var id = Global.monsters[i]
-		var uid = _new_uid()
-		_uid_to_handler[uid] = handler
-		handler.get_node("Player").texture = load(Global.monster_data[id]["texture"])
+		var species_id: int = int(inst["species"])
+		var hp := float(inst.get("hp", 0))
+		#always display the correct sprite in that slot (alive or dead)
+		handler.get_node("Player").texture = load(Global.monster_data[species_id]["texture"])
+		handler.get_node("Player").modulate = Color(1, 1, 1, 1)
+		# Dead=greyed, no stats, no label
+		if hp <= 0.0:
+			handler.get_node("Player").modulate = Color(0.6, 0.6, 0.6, 0)
+			handler.get_node("PlayerStats").hide()
+			handler.get_node("Label").hide()
+			continue
+		#Alive=create battle uid + stats
+		var battle_uid := _new_uid()
+		_uid_to_handler[battle_uid] = handler
 		var stats = handler.get_node("PlayerStats")
-		stats.setup(id, true, uid)
-		_uid_to_stats[uid] = stats
+		stats.show()
+		stats.setup(species_id, true, battle_uid, -1, monster_uid)
+		_uid_to_stats[battle_uid] = stats
+		#HP label for alive only
+		handler.get_node("Label").show()
+		#handler.get_node("Label").text = "%d" % int(hp)
 		if not stats.defeat.is_connected(_on_unit_defeat):
 			stats.defeat.connect(_on_unit_defeat)
 		if not stats.hp_changed.is_connected(_on_hp_changed):
@@ -117,12 +145,12 @@ func apply_enemy_layout(_visible_count: int) -> void:
 	var h2: Control = enemy_handlers[2]
 	match _visible_count:
 		1:
-			_set_enemy_slot(h0, 0.2, 0.7) # centered ~45%
+			_set_enemy_slot(h0, 0.2, 0.7) #centered ~45%
 			h1.visible = false
 			h2.visible = false
 		2:
-			_set_enemy_slot(h0, 0.1, 0.5)   # left 45%
-			_set_enemy_slot(h1, 0.5, 0.9)   # right 45%
+			_set_enemy_slot(h0, 0.1, 0.5)   #left 45%
+			_set_enemy_slot(h1, 0.5, 0.9)   #right 45%
 			h2.visible = false
 		_:
 			_set_enemy_slot(h0, 0.1, 0.4)
@@ -140,7 +168,6 @@ func _set_enemy_slot(h: Control, left: float, right: float) -> void:
 	h.offset_right = 0
 	h.offset_top = 0
 	h.offset_bottom = 0
-
 
 func _spawn_enemy_visual_only(slot_index: int, monster_id: int) -> void:
 	var handler: Control = enemy_handlers[slot_index]
@@ -182,6 +209,7 @@ func play_enemy_drop_in_sequence(_visible_count) -> void:
 		else:
 			hover.set_anim_speed(0.67)
 		await hover.play_drop_in()
+		hover.set_anim_speed(0.67)
 	for slot in range(_visible_count):
 		var h: Control = enemy_handlers[slot]
 		#if !h.visible:
@@ -189,7 +217,7 @@ func play_enemy_drop_in_sequence(_visible_count) -> void:
 		var hover: HoverAnim = h.get_node("Control/HoverRoot") as HoverAnim
 		h.get_node("MonsterStats").show()
 		if _visible_count == 1:
-			await get_tree().create_timer(0.2).timeout
+			await get_tree().create_timer(0.3).timeout
 		hover.start_hover()
 
 
@@ -198,16 +226,18 @@ func order_setup():
 	var entries: Array = []
 	#Players
 	for handler in $Players/HB.get_children():
-		if handler.name == "Control" or handler.name == "Control2" or !handler.get_node("PlayerStats").visible:
+		if handler.name == "Control" or handler.name == "Control2":
 			continue
 		var stats = handler.get_node("PlayerStats")
-		entries.append({
-			"uid": stats.uid,
-			"id": stats.monster_id,
-			"is_enemy": false,
-			"speed": Global.monster_data[stats.monster_id]["speed"],
-			"time_left": Global.monster_data[stats.monster_id]["speed"]
-			})
+		if stats.get_hp()>0.0:
+			entries.append({
+				"uid": stats.uid,
+				"id": stats.monster_id,
+				"monster_uid": stats.monster_uid,
+				"is_enemy": false,
+				"speed": 10,
+				"time_left": 10
+				})
 	for e in _enemy_entries:
 		entries.append(e)
 	timeline = BattleTimeline.new()
@@ -272,8 +302,10 @@ func _animate_queue_hp(uid: int, hp: float, max_hp: float) -> void:
 
 func start_next_turn():
 	await _wait_until_idle()
+	if not _has_alive_enemies():
+		return
 	$PlayerAttack.hide()
-	#Get next actor (remove from queue)
+	#Get next (remove from queue)
 	while true:
 		if timeline.queue.is_empty():
 			return
@@ -287,7 +319,7 @@ func start_next_turn():
 	if current_entry["is_enemy"]:
 		#delay before enemy acts
 		await get_tree().create_timer(0.5).timeout
-		var atk: Global.Attack = Global.Attack.WATER
+		var atk: Global.Attack = Global.Attack.AT2 
 		var target_uid := choose_random_alive_player_uid()
 		if target_uid != -1:
 			perform_attack_on_uid(target_uid, atk)
@@ -298,12 +330,12 @@ func start_next_turn():
 		call_deferred("start_next_turn")
 		return
 	#Player turn
-	Global.current_monster = current_entry["id"]
+	Global.current_monster = current_entry.get("monster_uid", -1); 
 	$PlayerAttack/Control/TextureRect.texture = load(Global.monster_data[Global.current_monster]['texture'])
 	show_current_player_box()
 	$"battle menu".current_state = Global.State.ATTACK
 	$"battle menu".refresh()
-	$"battle menu".current_monst = current_entry['id']
+	$"battle menu".current_monst = int(current_entry.get("monster_uid", -1))
 	$"battle menu".current_state = Global.State.ATTACK
 
 func order_update():
@@ -326,14 +358,14 @@ func _on_battle_menu_selected(state, type):
 	var atk: Global.Attack = type
 	pending_attack = atk
 	#If this attack does NOT need a target (self/status), resolve immediately
-	#attack_data['target'] == 0 for self-type actions.
+	#attack_data['target'] == 0 for self-type actions; change to TargetType
 	if int(Global.attack_data[atk]["target"]) == 0:
 		#Apply to self (current actor)
 		toggle_players_vis()
 		await perform_attack_on_uid(int(current_entry["uid"]), atk)
 		_end_player_action(atk)
 		return
-	#Otherwise, enter enemy targeting mode; adding ally targeting later
+	#Else= enter enemy targeting mode; adding ally targeting later
 	target_mode = TargetMode.ENEMY
 	$"battle menu".hide()
 	$TapOverlayLabel.show()
@@ -418,36 +450,52 @@ func _on_unit_defeat(uid: int) -> void:
 	timeline.remove_uid(uid)
 	_uid_to_handler.erase(uid)
 	_uid_to_stats.erase(uid)
-	#animate queue death (this will reflow after first 0.5s)
+	#animate queue death 
 	if slot_index == -1 and get_alive_player_handlers() == 0:
 		_end_busy()
-		get_tree().change_scene_to_file("res://scenes/win.tscn")
+		finish_battle(false)
 		return
+	await get_tree().create_timer(0.4).timeout
 	await animate_queue_death(uid)
-	#hide the handler content (or handler itself)
+	#hide the handler content 
 	if slot_index != -1:
 		var handler: Control = enemy_handlers[slot_index]
 		handler.visible = false
-		#spawn next enemy into same slot if any remain
-		if !enemy_handlers[0].visible and !enemy_handlers[1].visible and !enemy_handlers[2].visible:
-			get_tree().change_scene_to_file("res://scenes/win.tscn")
-			return
-		await get_tree().create_timer(0.2).timeout
-		if next_enemy_idx < enemy_roster.size():
+		#If there are more enemies to spawn, spawn immediately into that slot
+		if _has_enemies_remaining_to_spawn():
+			await get_tree().create_timer(0.2).timeout
 			var next_id: int = enemy_roster[next_enemy_idx]
 			next_enemy_idx += 1
 			update_remaining()
-			#drop-in sequence for THAT slot
 			await spawn_enemy_into_slot(slot_index, next_id)
-			#after spawn (timeline.add_entry happens inside spawn), refresh once
 			_animate_turn_order_to_new_state()
+			_end_busy()
+			return
+		#No more enemies to spawn: if none alive, win
+		if not _has_alive_enemies():
+			_end_busy()
+			finish_battle(true)
+			return
 	_end_busy()
 
-func get_alive_player_handlers() ->int:
-	for i in Global.monsters.size():
-		if i+1 in _uid_to_stats:
-			return 1
-	return 0
+func get_alive_player_handlers() -> int:
+	var count := 0
+	for uid in _uid_to_stats.keys():
+		var stats = _uid_to_stats[uid]
+		if stats.is_player and stats.get_hp() > 0:
+			count += 1
+	return count
+
+func _has_alive_enemies() -> bool:
+	for uid in _uid_to_stats.keys():
+		var stats = _uid_to_stats[uid]
+		if not stats.is_player and stats.get_hp() > 0:
+			return true
+	return false
+
+func _has_enemies_remaining_to_spawn() -> bool:
+	return next_enemy_idx < enemy_roster.size()
+
 
 func _is_uid_alive(uid: int) -> bool:
 	if uid <= 0:
@@ -457,7 +505,6 @@ func _is_uid_alive(uid: int) -> bool:
 	var stats = _uid_to_stats[uid]
 	if stats.get_hp() <= 0:
 		return false
-	#Optional: ensure handler is still visible (for enemies/players you hide)
 	if _uid_to_handler.has(uid) and not (_uid_to_handler[uid] as Control).visible:
 		return false
 	return true
@@ -508,10 +555,9 @@ func choose_random_alive_player_uid() -> int:
 	return -1 if alive.is_empty() else alive.pick_random()
 
 
-
 func spawn_enemy_into_slot(slot_index: int, monster_id: int) -> void:
 	var handler: Control = enemy_handlers[slot_index]
-	#IMPORTANT: hide while we configure + set start pose
+	#hide while we configure + set start pose
 	handler.visible = false
 	var uid = _new_uid()
 	_uid_to_handler[uid] = handler
@@ -529,11 +575,10 @@ func spawn_enemy_into_slot(slot_index: int, monster_id: int) -> void:
 		stats.defeat.connect(_on_unit_defeat)
 	if not stats.hp_changed.is_connected(_on_hp_changed):
 		stats.hp_changed.connect(_on_hp_changed)
-	#Set drop-in START pose BEFORE making visible
+	#Set drop-in
 	var hover: HoverAnim = handler.get_node("Control/HoverRoot") as HoverAnim
 	hover.stop_hover()
 	handler.visible = false
-	#This method should force the start pose (see below)
 	hover.set_drop_in_start_pose()
 	#Now show and play
 	handler.visible = true
@@ -692,20 +737,17 @@ func animate_queue_death(uid: int) -> void:
 	ghost.z_as_relative = false
 	#ghost.z_index = 1000
 	$Turn_order_deaths.add_child(ghost)
-	#Hide the real row immediately, but DO NOT reflow yet
 	row.visible = false
-	#---- Phase 1 tween (0.5s): -20x, +25y ----
 	var t1 := create_tween()
 	t1.set_trans(Tween.TRANS_SINE)
 	t1.set_ease(Tween.EASE_IN_OUT)
 	var p1 := ghost.position + Vector2(-20.0, 25.0)
 	t1.tween_property(ghost, "position", p1, 0.4)
 	await t1.finished
-	#---- Now pretend it's not there: free mapping + reflow queue ----
 	#Remove mapping so queue rows can be reassigned/moved
 	_queue_row_by_uid.erase(uid)
 	_queue_uid_by_row.erase(row)
-	#Kill any HP tween tied to this uid (if you added that system)
+	#Kill any HP tween tied to this uid
 	if _queue_hp_tweens.has(uid):
 		var old: Tween = _queue_hp_tweens[uid]
 		if old and old.is_running():
@@ -713,7 +755,6 @@ func animate_queue_death(uid: int) -> void:
 		_queue_hp_tweens.erase(uid)
 	#Reflow the queue now
 	_animate_turn_order_to_new_state()
-	#---- Phase 2 tween (0.5s): -25x, +400y + scale down + fade out ----
 	var t2 := create_tween()
 	t2.set_parallel(true)
 	t2.set_trans(Tween.TRANS_SINE)
@@ -751,3 +792,25 @@ func _filter_not_dying(arr: Array[int]) -> Array[int]:
 		if not _dying_uids.has(u):
 			out.append(u)
 	return out
+
+
+func finish_battle(player_won: bool) -> void:
+	var island_id = GameState.pending_battle["island_id"]
+	var node_id = GameState.pending_battle["node_id"]
+	var return_scene = GameState.pending_battle["return_scene"]
+
+	if player_won:
+		#GameState.inc_node_clears(island_id, node_id) # add this back later
+		GameState.set_status(
+			island_id,
+			node_id,
+			Global.LocationStatus.TEMP_FREED
+		)
+		#clear pending battle
+		GameState.pending_battle.clear()
+		get_tree().change_scene_to_file(return_scene)
+	else:
+		#put it back to DISCOVERED so it can be fought again
+		GameState.set_status(island_id, node_id, Global.LocationStatus.DISCOVERED)
+		GameState.set_current(island_id, "town")
+		get_tree().change_scene_to_file("res://scenes/general_village.tscn")

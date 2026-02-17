@@ -4,8 +4,13 @@ var grid_button_scene = preload("res://scenes/grid_button.tscn")
 
 
 #track where menu currently is and choose what buttons to display
-var current_state: Global.State:set = state_handler
-var current_monst : Global.Monster = Global.Monster.CLEAF
+var _current_state: Global.State = Global.State.ATTACK
+var current_state: Global.State:
+	get: return _current_state
+	set(value):
+		_current_state = value
+		refresh()
+var current_monst : Global.Monster = Global.Monster.Test2
 
 signal selected(state: Global.State, type)
 
@@ -48,11 +53,3 @@ func button_handler(state, type):
 			selected.emit(Global.State.DEFEND, type)
 	else:
 		selected.emit(state, type)
-
-
-func state_handler(value):
-	current_state = value
-	match value:
-		Global.State.ATTACK:
-			var monster_attacks: Array = Global.monster_data[Global.current_monster]["attacks"]
-			create_grid_buttons(Global.State.ATTACK, monster_attacks)

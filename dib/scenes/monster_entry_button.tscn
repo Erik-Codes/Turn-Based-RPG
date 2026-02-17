@@ -1,0 +1,48 @@
+[gd_scene load_steps=3 format=3 uid="uid://deaiudtr5umhp"]
+
+[ext_resource type="Script" uid="uid://c50o5swfyo8cg" path="res://scripts/monster_entry_button.gd" id="1_hqg86"]
+[ext_resource type="Texture2D" uid="uid://0d2smild1ql0" path="res://graphics/sprites/test_sprite9.png" id="2_5eb8d"]
+
+[node name="MonsterEntry" type="Button"]
+custom_minimum_size = Vector2(0, 70)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hqg86")
+
+[node name="Frame" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.8217887, 0.8217887, 0.8217885, 1)
+
+[node name="Icon" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.15
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_5eb8d")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Desc" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 23
+text = "Name: placeholder
+lvl: 20"

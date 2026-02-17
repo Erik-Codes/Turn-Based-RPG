@@ -3,10 +3,14 @@ class_name HoverAnim
 
 @onready var anim: AnimationPlayer = $AnimationPlayer
 
-@export var drop_percent := 2.0
-@export var hover_percent := 0.1
+@export var drop_ratio := 2.0
+@export var hover_ratio := 0.1
 @export var offset_norm: float = 0.0 :set = set_offset_norm
 @export var hover_norm: float = 0.0 :set = set_hover_norm
+
+#handles the hover for each monster when they are active
+#did it this way so they hover correctly no matter the screen pixels
+
 
 func set_offset_norm(v: float) -> void:
 	offset_norm = v
@@ -23,8 +27,8 @@ func _slot_height() -> float:
 
 func _apply_offsets() -> void:
 	var h := _slot_height()
-	var drop_px := h*drop_percent
-	var hover_px := h*hover_percent
+	var drop_px := h*drop_ratio
+	var hover_px := h*hover_ratio
 	position.y = (-drop_px*offset_norm) + (hover_px*hover_norm)
 
 func set_drop_in_start_pose() -> void:

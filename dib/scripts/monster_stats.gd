@@ -6,7 +6,9 @@ signal hp_changed(uid: int, hp: float, max_hp: float)
 var is_player: bool
 var monster_id: int
 var uid: int
+var monster_uid: int = -1 #persistent instance uid (players only)
 var slot_index: int = -1 #0, 1, or 2 for enemies
+var _defeated := false
 
 @onready var label = $PanelContainer/MarginContainer/VBoxContainer/Label
 @onready var bar = $PanelContainer/MarginContainer/VBoxContainer/ProgressBar
@@ -18,24 +20,41 @@ var _max_hp: float
 var _fill_tween: Tween
 var _chip_tween: Tween
 
-func setup(monster: Global.Monster, player = true, _uid = 0, _slot_index = -1) -> void:
+func setup(monster: int, player := true, _uid := 0, _slot_index := -1, _monster_uid := -1,) -> void:
 	uid = _uid
 	slot_index = _slot_index
-	var monster_data = Global.monster_data[monster]
-	label.text = monster_data["name"]
-	bar.max_value = monster_data["max health"]
-	bar.value = monster_data["max health"]
+	is_player = player
 	monster_id = monster
-	_max_hp = float(Global.monster_data[monster]["max health"])
-	_hp = _max_hp
+	monster_uid = _monster_uid
+	_defeated = false
+	var base := Global.monster_data[monster]
+	label.text = base["name"]
+	_apply_name_color(player)
+	#Compute stats
+	if player and monster_uid != -1:
+		#pull computed stats from GameState
+		var s := GameState.compute_stats(monster_uid)
+		_max_hp = float(s.get("max_hp", base["max health"]))
+		#persistent hp:
+		var saved_hp = GameState.roster.get(monster_uid, {}).get("hp", 1)
+		_hp = float(saved_hp) if saved_hp != null else _max_hp
+		_hp = clamp(_hp, 0.0, _max_hp)
+	else:
+		#enemies;
+		_max_hp = float(base["max health"])
+		_hp = _max_hp
+	#Bars setup
 	bar.max_value = _max_hp
 	bar.value = _hp
 	hp_fill.max_value = _max_hp
 	hp_chip.max_value = _max_hp
 	hp_fill.value = _hp
 	hp_chip.value = _hp
-	_apply_name_color(player)
+	if player and $"..".get_node("Label"):
+		$"../Label".text = str(_hp) +"/"+str(_max_hp)
+		$"../Label".show()
 
+#enemies will have different colored names (easier to tell them apart in the queue)
 func _apply_name_color(player: bool) -> void:
 	if player:
 		label.add_theme_color_override("font_color", Color(1,1,1))
@@ -46,12 +65,24 @@ func _apply_name_color(player: bool) -> void:
 		2: label.add_theme_color_override("font_color", Color(0,0,1))
 		_: label.add_theme_color_override("font_color", Color(1,1,1))
 
+#damage/heal the monster
 func update(attack_data: Dictionary) -> void:
-	#Apply to REAL HP instantly
 	_hp = clamp(_hp - float(attack_data["amount"]), 0.0, _max_hp)
-	#Animate the bar to match
+	#persist injuries
+	if is_player and monster_uid != -1:
+		GameState.roster[monster_uid]["hp"] = _hp
 	_animate_hp(_hp)
+	hp_changed.emit(uid, _hp, _max_hp)
+	#update the hp label
+	if is_player and $"..".get_node("Label"):
+		$"../Label".text = str(_hp) +"/"+str(_max_hp)
+	if _hp <= 0.0 and not _defeated:
+		_defeated = true
+		defeat.emit(uid)
 
+#get the speed easily from stats
+func get_speed():
+	return GameState.get_monster(monster_uid).get(['speed'],10)
 
 func _animate_hp(target: float) -> void:
 	#kill old tweens
@@ -73,8 +104,3 @@ func _animate_hp(target: float) -> void:
 
 func get_hp() -> float: return _hp
 func get_max_hp() -> float: return _max_hp
-
-func _on_progress_bar_value_changed(value):
-	hp_changed.emit(uid, _hp, _max_hp)
-	if value <= 0.0:
-		defeat.emit(uid)

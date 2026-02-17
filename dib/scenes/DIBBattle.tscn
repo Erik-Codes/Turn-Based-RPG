@@ -1,0 +1,534 @@
+[gd_scene load_steps=25 format=3 uid="uid://vd5oggm7c0s4"]
+
+[ext_resource type="Texture2D" uid="uid://c24bne26ligxm" path="res://graphics/test/test_bg2.png" id="1_areuc"]
+[ext_resource type="Script" uid="uid://bily50kop7iah" path="res://scripts/battle.gd" id="1_e3e7x"]
+[ext_resource type="PackedScene" uid="uid://b4b440gcmclfp" path="res://scenes/input_menu_DIBBattle.tscn" id="5_t8jgi"]
+[ext_resource type="Texture2D" uid="uid://dds0cgxll5u4u" path="res://graphics/test/green_hatchling-resized-to-210x263-removebg-preview.png" id="6_gvtnt"]
+[ext_resource type="PackedScene" uid="uid://bjgyecdmq1qnj" path="res://scenes/turns.tscn" id="6_mrgw0"]
+[ext_resource type="Texture2D" uid="uid://d4nj15ekty5wj" path="res://graphics/test/rightnoframe-resized-to-256x256-removebg-preview.png" id="6_pjx7w"]
+[ext_resource type="PackedScene" uid="uid://woorb4x8h16r" path="res://scenes/monster_handler.tscn" id="7_0x07f"]
+[ext_resource type="Texture2D" uid="uid://jfbaol5rdvd6" path="res://graphics/test/openslot-resized-to-256x256.jpeg" id="7_6qnt1"]
+[ext_resource type="Texture2D" uid="uid://du4e0a6t8xniu" path="res://graphics/test/sil2.png" id="7_pxbuf"]
+[ext_resource type="Texture2D" uid="uid://dqap1sq0dpvwr" path="res://graphics/test/leftnof-resized-to-256x256-removebg-preview (1).png" id="8_6qnt1"]
+[ext_resource type="FontFile" uid="uid://bqsbg747cxhvw" path="res://graphics/fonts/IMFellEnglishSC-Regular.ttf" id="8_pxbuf"]
+[ext_resource type="PackedScene" uid="uid://cltjfgdbh7g52" path="res://scenes/player_handler.tscn" id="8_t8jgi"]
+[ext_resource type="Texture2D" uid="uid://b7aingqsf2223" path="res://graphics/test/output-onlinepngtools__1_-resized-to-256x256__1_-removebg-preview.png" id="9_6qnt1"]
+[ext_resource type="Texture2D" uid="uid://crhiuwx4tpxfo" path="res://graphics/test/otherslot-resized-to-256x256-removebg-preview.png" id="9_pjx7w"]
+[ext_resource type="Texture2D" uid="uid://dlx0ew5ljhvj0" path="res://graphics/test/sil.png" id="11_qiyie"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_areuc"]
+atlas = ExtResource("6_gvtnt")
+
+[sub_resource type="Animation" id="Animation_gvtnt"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Control/TextureRect:position:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Control/TextureRect:position:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [-52.5]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Control/TextureRect:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_nvvyh"]
+resource_name = "attack"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Control/TextureRect:position:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.26666668, 0.8666667, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 0.0, 200.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = false
+tracks/1/path = NodePath("Control/TextureRect:position:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.033333335, 0.06666666, 0.1, 0.13333334, 0.16666667, 0.2, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [-52.5, -47.5, -57.5, -47.5, -57.5, -47.5, -52.5, -52.5]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Control/TextureRect:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_e2sf1"]
+_data = {
+&"RESET": SubResource("Animation_gvtnt"),
+&"attack": SubResource("Animation_nvvyh")
+}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6qnt1"]
+bg_color = Color(0, 0, 0, 0.5294118)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qiyie"]
+bg_color = Color(0, 0, 0, 0.5294118)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aofla"]
+bg_color = Color(0, 0, 0, 0.5294118)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wx2n4"]
+bg_color = Color(0, 0, 0, 0.5294118)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8yoni"]
+bg_color = Color(0, 0, 0, 0.5294118)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="DIBBattle" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_e3e7x")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BG" type="TextureRect" parent="Control"]
+texture_filter = 4
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_areuc")
+expand_mode = 1
+
+[node name="Turn_order_deaths" type="Control" parent="."]
+layout_mode = 1
+anchor_left = 0.01
+anchor_top = 0.01
+anchor_right = 0.02
+anchor_bottom = 0.65
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Turn_order" parent="." instance=ExtResource("6_mrgw0")]
+layout_mode = 1
+anchor_left = 0.01
+anchor_right = 0.12
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="Enemies" type="Control" parent="."]
+layout_mode = 1
+anchor_left = 0.1
+anchor_right = 0.97
+anchor_bottom = 0.65
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HB" type="Control" parent="Enemies"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MonsterHandler" parent="Enemies/HB" instance=ExtResource("7_0x07f")]
+layout_mode = 1
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+
+[node name="MonsterHandler2" parent="Enemies/HB" instance=ExtResource("7_0x07f")]
+layout_mode = 1
+anchor_left = 0.4
+anchor_right = 0.7
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+
+[node name="MonsterHandler3" parent="Enemies/HB" instance=ExtResource("7_0x07f")]
+layout_mode = 1
+anchor_left = 0.7
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+
+[node name="PlayerAttack" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Control" type="Control" parent="PlayerAttack"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="PlayerAttack/Control"]
+visible = false
+modulate = Color(1, 1, 1, 255)
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -52.5
+offset_right = 157.50049
+offset_bottom = 263.00024
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+texture = SubResource("AtlasTexture_areuc")
+stretch_mode = 3
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerAttack"]
+libraries = {
+&"": SubResource("AnimationLibrary_e2sf1")
+}
+
+[node name="UiFrame" type="Control" parent="."]
+layout_mode = 1
+anchor_top = 0.65
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="UiFrame"]
+layout_mode = 1
+anchor_right = 0.201
+anchor_bottom = 1.0
+
+[node name="TextureRect" type="TextureRect" parent="UiFrame/Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_pjx7w")
+expand_mode = 1
+
+[node name="ui9" type="TextureRect" parent="UiFrame/Control"]
+modulate = Color(1, 1, 1, 0.5294118)
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_qiyie")
+expand_mode = 1
+stretch_mode = 3
+
+[node name="Control2" type="Control" parent="UiFrame"]
+layout_mode = 1
+anchor_left = 0.2
+anchor_right = 0.4
+anchor_bottom = 1.0
+
+[node name="ui2" type="TextureRect" parent="UiFrame/Control2"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_pjx7w")
+expand_mode = 1
+
+[node name="Control3" type="Control" parent="UiFrame"]
+layout_mode = 1
+anchor_left = 0.4
+anchor_right = 0.6
+anchor_bottom = 1.0
+
+[node name="ui3" type="TextureRect" parent="UiFrame/Control3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_6qnt1")
+expand_mode = 1
+flip_h = true
+
+[node name="Control4" type="Control" parent="UiFrame"]
+layout_mode = 1
+anchor_left = 0.6
+anchor_right = 0.8
+anchor_bottom = 1.0
+
+[node name="ui4" type="TextureRect" parent="UiFrame/Control4"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_6qnt1")
+expand_mode = 1
+
+[node name="Control5" type="Control" parent="UiFrame"]
+layout_mode = 1
+anchor_left = 0.798
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ui5" type="TextureRect" parent="UiFrame/Control5"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_6qnt1")
+expand_mode = 1
+
+[node name="ColorRect" type="Button" parent="UiFrame/Control5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_6qnt1")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qiyie")
+theme_override_styles/hover = SubResource("StyleBoxFlat_aofla")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_wx2n4")
+theme_override_styles/focus = SubResource("StyleBoxFlat_8yoni")
+
+[node name="Players" type="Control" parent="."]
+layout_mode = 1
+anchor_top = 0.65
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="HB" type="Control" parent="Players"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="Players/HB"]
+layout_mode = 1
+anchor_right = 0.2
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="Players/HB/Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1027.0
+offset_right = 1027.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.44705883, 0.44705883, 0.44705883, 0.5254902)
+
+[node name="Control" type="Control" parent="Players/HB/Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Players/HB/Control/Control"]
+modulate = Color(0.003921569, 0.003921569, 0.003921569, 0.6627451)
+texture = ExtResource("7_pxbuf")
+
+[node name="Label" type="Label" parent="Players/HB/Control/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -71.4
+offset_top = 23.865
+offset_right = 76.6
+offset_bottom = 65.86501
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.6038839
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 15
+theme_override_fonts/font = ExtResource("8_pxbuf")
+theme_override_font_sizes/font_size = 33
+text = "LOCKED"
+
+[node name="PlayerHandler1" parent="Players/HB" instance=ExtResource("8_t8jgi")]
+layout_mode = 1
+anchor_top = 0.0
+offset_bottom = 0.9999695
+size_flags_horizontal = 3
+
+[node name="PlayerHandler0" parent="Players/HB" instance=ExtResource("8_t8jgi")]
+layout_mode = 1
+anchor_left = 0.4
+anchor_top = 0.0
+anchor_right = 0.6
+size_flags_horizontal = 3
+
+[node name="PlayerHandler2" parent="Players/HB" instance=ExtResource("8_t8jgi")]
+layout_mode = 1
+anchor_left = 0.6
+anchor_top = 0.0
+anchor_right = 0.8
+size_flags_horizontal = 3
+
+[node name="PlayerHandler3" parent="Players/HB" instance=ExtResource("8_t8jgi")]
+visible = false
+layout_mode = 1
+anchor_left = 0.8
+anchor_top = 0.0
+anchor_right = 1.0
+rotation = 0.33684856
+size_flags_horizontal = 3
+
+[node name="Control2" type="Control" parent="Players/HB"]
+anchors_preset = 0
+offset_left = 1027.0
+offset_right = 1280.0
+offset_bottom = 252.0
+size_flags_horizontal = 3
+
+[node name="CurrentPlayer3" type="Control" parent="Players"]
+layout_mode = 1
+anchor_left = 0.8
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CurrentPlayer" type="Control" parent="."]
+layout_mode = 1
+anchor_top = 0.65
+anchor_right = 0.2
+anchor_bottom = 1.0
+grow_vertical = 0
+
+[node name="battle menu" parent="." instance=ExtResource("5_t8jgi")]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+mouse_filter = 2
+
+[node name="TapOverlayLabel" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 473.0
+offset_top = 401.0
+offset_right = 867.0
+offset_bottom = 456.0
+theme_override_colors/font_color = Color(0.82962954, 0.24022678, 0.36504403, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 18
+theme_override_font_sizes/font_size = 40
+text = "TAP YOUR SELCTION"
+
+[node name="EnemiesRemaining" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 23.0
+grow_horizontal = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 50
+text = "test"
+
+[connection signal="selected" from="battle menu" to="." method="_on_battle_menu_selected"]

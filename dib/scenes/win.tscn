@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3 uid="uid://bj6gblqh6nf7"]
+
+[ext_resource type="Texture2D" uid="uid://cdxurjvhbehx7" path="res://graphics/test/ChatGPT Image Jan 6, 2026, 03_41_58 PM (1).png" id="1_iiocm"]
+[ext_resource type="Texture2D" uid="uid://dwr2cej4sjh7y" path="res://graphics/test/ChatGPT Image Jan 6, 2026, 03_42_01 PM (1).png" id="2_yxbqr"]
+[ext_resource type="Texture2D" uid="uid://yc3iivwrg7fa" path="res://graphics/test/green_hatchling.png" id="3_tylv2"]
+
+[node name="Win" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 100
+text = "WIN"
+
+[node name="ChatGptImageJan6,2026,034158Pm(1)" type="Sprite2D" parent="."]
+position = Vector2(214, 313)
+texture = ExtResource("1_iiocm")
+
+[node name="ChatGptImageJan6,2026,034201Pm(1)" type="Sprite2D" parent="."]
+position = Vector2(1028, 292)
+texture = ExtResource("2_yxbqr")
+
+[node name="GreenHatchling" type="Sprite2D" parent="."]
+position = Vector2(595, 699)
+texture = ExtResource("3_tylv2")

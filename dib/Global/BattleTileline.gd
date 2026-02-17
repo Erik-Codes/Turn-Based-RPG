@@ -5,22 +5,31 @@ var time := 0.0
 var queue: Array = [] #[{ "id":int, "is_enemy":bool, "next_time":float, etc. }, dict]
 
 func init(entries: Array) -> void:
+	queue.clear()
 	time = 0.0
-	queue = entries
+	for e in entries:
+		var entry = e.duplicate(true)
+		if not entry.has("time_left"):
+			#similar to add_entry() behavior
+			var speed := float(entry.get("speed", 100.0))
+			entry["time_left"] = 0.1 + (100.0 / max(speed, 1.0)) + randf() * 0.2
+		queue.append(entry)
 	queue.sort_custom(func(a, b): return float(a["speed"]) < float(b["speed"]))
 	_sort()
 
+#get monster data (up next)
 func pop_next() -> Dictionary:
 	_sort()
 	var entry: Dictionary = queue.pop_front()
 	time = float(entry["time_left"])
 	return entry
 
+#add to priority queue
 func commit(entry: Dictionary, cost: float) -> void:
 	entry["time_left"] = time+cost
 	queue.append(entry)
 	_sort()
-
+#dead
 func remove_uid(uid: int) -> void:
 	for i in range(queue.size()):
 		if int(queue[i]["uid"]) == uid:
