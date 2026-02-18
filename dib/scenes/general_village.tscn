@@ -49,11 +49,11 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Party"
 
-[node name="Shop" type="Button" parent="GridContainer"]
+[node name="Quests" type="Button" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Shop"
+text = "Quests"
 
 [node name="Upgrades" type="Button" parent="GridContainer"]
 layout_mode = 2
@@ -61,13 +61,14 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Upgrades"
 
-[node name="Quests" type="Button" parent="GridContainer"]
+[node name="Shop" type="Button" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Quests"
+text = "Shop"
 
 [node name="PartyPanel" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -100,172 +101,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LineupSlot0" type="Button" parent="PartyPanel/Lineup/VBoxContainer"]
+[node name="MonsterEntry1" parent="PartyPanel/Lineup/VBoxContainer" instance=ExtResource("6_ltora")]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot0"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Frame" type="ColorRect" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot0/Control"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 1)
-
-[node name="Frame2" type="ColorRect" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot0/Control"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.01
-anchor_top = 0.05
-anchor_right = 0.99
-anchor_bottom = 0.95
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.54163796, 0.7384958, 0.74435294, 1)
-
-[node name="Icon" type="TextureRect" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot0"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.2
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("4_5bsx0")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Desc" type="Label" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot0"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.2
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 23
-text = "Name: placeholder
-lvl: 20"
-
-[node name="LineupSlot1" type="Button" parent="PartyPanel/Lineup/VBoxContainer"]
+[node name="MonsterEntry2" parent="PartyPanel/Lineup/VBoxContainer" instance=ExtResource("6_ltora")]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="Frame" type="ColorRect" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot1"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.8217887, 0.8217887, 0.8217885, 1)
-
-[node name="Icon" type="TextureRect" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot1"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.2
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("4_5bsx0")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Desc" type="Label" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot1"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.2
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 23
-text = "Name: placeholder
-lvl: 20"
-
-[node name="LineupSlot2" type="Button" parent="PartyPanel/Lineup/VBoxContainer"]
+[node name="MonsterEntry3" parent="PartyPanel/Lineup/VBoxContainer" instance=ExtResource("6_ltora")]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="Frame" type="ColorRect" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot2"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.8217887, 0.8217887, 0.8217885, 1)
-
-[node name="Icon" type="TextureRect" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot2"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.2
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("4_5bsx0")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Desc" type="Label" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot2"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.2
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 23
-text = "Name: placeholder
-lvl: 20"
-
-[node name="LineupSlot3" type="Button" parent="PartyPanel/Lineup/VBoxContainer"]
+[node name="MonsterEntry4" parent="PartyPanel/Lineup/VBoxContainer" instance=ExtResource("6_ltora")]
 layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Frame" type="ColorRect" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot3"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.8217887, 0.8217887, 0.8217885, 1)
-
-[node name="Icon" type="TextureRect" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot3"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.2
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("4_5bsx0")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Desc" type="Label" parent="PartyPanel/Lineup/VBoxContainer/LineupSlot3"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.2
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 23
-text = "Name: placeholder
-lvl: 20"
 
 [node name="SelectedInfo" type="Control" parent="PartyPanel"]
 layout_mode = 1
@@ -399,7 +245,7 @@ offset_bottom = 51.0
 text = "Return to island"
 
 [connection signal="pressed" from="GridContainer/Party" to="." method="_on_party_pressed"]
-[connection signal="pressed" from="GridContainer/Shop" to="." method="_on_shop_pressed"]
-[connection signal="pressed" from="GridContainer/Upgrades" to="." method="_on_upgrades_pressed"]
 [connection signal="pressed" from="GridContainer/Quests" to="." method="_on_quests_pressed"]
+[connection signal="pressed" from="GridContainer/Upgrades" to="." method="_on_upgrades_pressed"]
+[connection signal="pressed" from="GridContainer/Shop" to="." method="_on_shop_pressed"]
 [connection signal="pressed" from="BackButton" to="." method="_on_button_pressed"]

@@ -8,6 +8,9 @@ var MAX_PARTY_SIZE = 3
 
 var islands: Dictionary = {}
 var from_town = false
+
+const MAX_ACTIVE_QUESTS := 3 
+enum QuestStatus { ACTIVE, READY_TO_TURN_IN }
 # For battle transitions
 var pending_battle := {
 	"island_id": "",
@@ -17,6 +20,51 @@ var pending_battle := {
 var next_uid := 1
 var roster: Dictionary = {}
 var party: Array[int] = []
+
+# quest_state[island_id] = {
+#   "day_id": int,
+#   "next_idx": int,            #next quest index in Global.quest_order[island]
+#   "active": Array[Dictionary] #quest instances
+# }
+var quest_state: Dictionary = {}
+
+#put in JSON l8er
+var quest_order := {
+	"hearthbay": [
+		"HB_KILL_3",
+		"HB_VISIT_ALL_DAY1",
+		"HB_FISH_UNIQUE_3"
+	]
+}
+
+var quest_defs := {
+	"HB_KILL_3": {
+		"island": "hearthbay",
+		"title": "Thin the Wilds",
+		"desc": "Defeat 3 monsters.",
+		"type": "KILL",
+		"goal": {"count": 3},
+		"rewards": {"gold": 30}
+	},
+	"HB_VISIT_ALL_DAY1": {
+		"island": "hearthbay",
+		"title": "Scout the Island",
+		"desc": "Visit every node in one day.",
+		"type": "VISIT_ALL_DAY",
+		"goal": {"nodes": ["town","node_3","node_4","node_2","node_5","node_6","fishing"]},
+		"rewards": {"gold": 60}
+	},
+	"HB_FISH_UNIQUE_3": {
+		"island": "hearthbay",
+		"title": "Strange Catches",
+		"desc": "Fish up 3 unique monsters.",
+		"type": "FISH_UNIQUE",
+		"goal": {"count": 3},
+		"rewards": {"gold": 50}
+	}
+}
+
+
 
 func _ready() -> void:
 	#new_monster auto-adds to party if room

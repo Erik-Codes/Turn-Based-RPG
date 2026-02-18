@@ -21,8 +21,6 @@ func _on_button_pressed():
 
 func _on_party_pressed():
 	active = Showing.PARTY
-	for i in GameState.party:
-		$PartyPanel.fill_party()
 	$PartyPanel.show()
 	$BackButton.text = "back to town"
 
