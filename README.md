@@ -10,6 +10,14 @@ I thought of this project as a great way to learn **Godot and GDScript through r
 
 ---
 
+## Last Edit
+My most recent changes (2/18)
+- replaced party lineup slots w/ MonsterEntryButtons and refactored the code to just use the built-in setup
+- changed it so 1 press selects the monster (to view stats), and dragging is used to swap (dragging gives just the image of the monster)
+- made sure the 4th (locked) slot is unusable until MAX_PARTY_SIZE is changed down the line
+- added outline for quests to GameState (next)
+---
+
 ## Overview
 
 I'm combining node-based overworld exploration with a timeline-driven battle system and persistent creature management. I'm trying to emphasizes clean architecture, modular UI components, and scalable state management.
