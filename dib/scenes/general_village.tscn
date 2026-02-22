@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://xwp86nkyxc6b"]
+[gd_scene load_steps=9 format=3 uid="uid://xwp86nkyxc6b"]
 
 [ext_resource type="Script" uid="uid://bg31b2058b2ik" path="res://scripts/general_village.gd" id="1_ve18s"]
 [ext_resource type="Shader" uid="uid://o0rretc0csid" path="res://scenes/general_village.gdshader" id="2_my47q"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://0d2smild1ql0" path="res://graphics/sprites/test_sprite9.png" id="4_5bsx0"]
 [ext_resource type="Script" uid="uid://dvk42s4w3g8ib" path="res://scripts/party_panel.gd" id="4_sr4ki"]
 [ext_resource type="PackedScene" uid="uid://deaiudtr5umhp" path="res://scenes/monster_entry_button.tscn" id="6_ltora"]
+[ext_resource type="Script" uid="uid://bhsu6ri78o4d3" path="res://scripts/quest_panel.gd" id="7_y08ki"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sr4ki"]
 shader = ExtResource("2_my47q")
@@ -234,6 +235,155 @@ size_flags_vertical = 3
 
 [node name="MonsterEntry" parent="PartyPanel/MonsterList/ScrollContainer/VBoxContainer" instance=ExtResource("6_ltora")]
 layout_mode = 2
+
+[node name="QuestPanel" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("7_y08ki")
+
+[node name="ColorRect" type="ColorRect" parent="QuestPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.37036446, 0.3703645, 0.37036446, 1)
+
+[node name="QuestControl" type="Control" parent="QuestPanel"]
+layout_mode = 1
+anchor_left = 0.2
+anchor_top = 0.3
+anchor_right = 0.8
+anchor_bottom = 0.7
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="QuestPanel/QuestControl"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Quest1" type="Button" parent="QuestPanel/QuestControl/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="QuestPanel/QuestControl/VBoxContainer/Quest1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="name_desc" type="Label" parent="QuestPanel/QuestControl/VBoxContainer/Quest1"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.015
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "NAME FILLER
+DESC"
+
+[node name="Label" type="Label" parent="QuestPanel/QuestControl/VBoxContainer/Quest1"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.985
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "Progress: 20/200"
+horizontal_alignment = 2
+
+[node name="Quest2" type="Button" parent="QuestPanel/QuestControl/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="QuestPanel/QuestControl/VBoxContainer/Quest2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="name_desc" type="Label" parent="QuestPanel/QuestControl/VBoxContainer/Quest2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.015
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "NAME FILLER
+DESC"
+
+[node name="Label" type="Label" parent="QuestPanel/QuestControl/VBoxContainer/Quest2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.985
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "Progress: 20/200"
+horizontal_alignment = 2
+
+[node name="Quest3" type="Button" parent="QuestPanel/QuestControl/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="QuestPanel/QuestControl/VBoxContainer/Quest3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="name_desc" type="Label" parent="QuestPanel/QuestControl/VBoxContainer/Quest3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.015
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "NAME FILLER
+DESC"
+
+[node name="Label" type="Label" parent="QuestPanel/QuestControl/VBoxContainer/Quest3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.985
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
+text = "Progress: 20/200"
+horizontal_alignment = 2
 
 [node name="BackButton" type="Button" parent="."]
 layout_mode = 1

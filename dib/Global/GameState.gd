@@ -21,24 +21,33 @@ var next_uid := 1
 var roster: Dictionary = {}
 var party: Array[int] = []
 
-# quest_state[island_id] = {
-#   "day_id": int,
-#   "next_idx": int,            #next quest index in Global.quest_order[island]
-#   "active": Array[Dictionary] #quest instances
+var island_metrics := {}
+# island_metrics[island_id] = {
+#   "day_id": 0,
+#   "kills_total": 0,
+#   "fish_unique_species": {}, #species_id->true
+#   "nodes_visited_today": {}, #node_id->true
+#   "nodes_visited_ever": {}, #node_id->true
 # }
-var quest_state: Dictionary = {}
+
+var quest_state := {}
+# quest_state[island_id] = {
+#   "next_idx": 0,
+#   "turned_in": {}, #qid->true
+# }
 
 #put in JSON l8er
 var quest_order := {
 	"hearthbay": [
-		"HB_KILL_3",
-		"HB_VISIT_ALL_DAY1",
-		"HB_FISH_UNIQUE_3"
+		"KILL_3",
+		"VISIT_ALL_DAY1",
+		"FISH_UNIQUE_3",
+		"KILL_5"
 	]
 }
 
 var quest_defs := {
-	"HB_KILL_3": {
+	"KILL_3": {
 		"island": "hearthbay",
 		"title": "Thin the Wilds",
 		"desc": "Defeat 3 monsters.",
@@ -46,7 +55,15 @@ var quest_defs := {
 		"goal": {"count": 3},
 		"rewards": {"gold": 30}
 	},
-	"HB_VISIT_ALL_DAY1": {
+	"KILL_5": {
+		"island": "hearthbay",
+		"title": "Thin the Wilds",
+		"desc": "Defeat 5 monsters.",
+		"type": "KILL",
+		"goal": {"count": 5},
+		"rewards": {"gold": 30}
+	},
+	"VISIT_ALL_DAY1": {
 		"island": "hearthbay",
 		"title": "Scout the Island",
 		"desc": "Visit every node in one day.",
@@ -54,7 +71,7 @@ var quest_defs := {
 		"goal": {"nodes": ["town","node_3","node_4","node_2","node_5","node_6","fishing"]},
 		"rewards": {"gold": 60}
 	},
-	"HB_FISH_UNIQUE_3": {
+	"FISH_UNIQUE_3": {
 		"island": "hearthbay",
 		"title": "Strange Catches",
 		"desc": "Fish up 3 unique monsters.",
@@ -234,3 +251,108 @@ func heal_party_to_full() -> void:
 
 #func player_defeated()
 #go to town
+
+
+#island+quest metrics
+func ensure_island_progress(island_id: String) -> void:
+	if not island_metrics.has(island_id):
+		island_metrics[island_id] ={
+			"day_id": 0,
+			"kills_total": 0,
+			"fish_unique_species": {},
+			"nodes_visited_today": {},
+			"nodes_visited_ever": {},
+			"special":{}
+		}
+	if not quest_state.has(island_id):
+		quest_state[island_id] = {
+			"next_idx":0,
+			"turned_in": {}
+		}
+
+func advance_day(island_id: String) -> void:
+	ensure_island_progress(island_id)
+	island_metrics[island_id]["day_id"] = int(island_metrics[island_id]["day_id"])+1
+	island_metrics[island_id]["nodes_visited_today"] = {}
+
+func record_node_visited(island_id: String, node_id: String) -> void:
+	ensure_island_progress(island_id)
+	(island_metrics[island_id]["nodes_visited_today"] as Dictionary)[node_id] = true
+	(island_metrics[island_id]["nodes_visited_ever"] as Dictionary)[node_id] = true
+
+func record_kills(island_id: String, amount: int = 1) -> void:
+	ensure_island_progress(island_id)
+	island_metrics[island_id]["kills_total"] = int(island_metrics[island_id]["kills_total"])+amount
+
+func record_fished_monster(island_id: String, species_id: int) -> void:
+	ensure_island_progress(island_id)
+	(island_metrics[island_id]["fish_unique_species"] as Dictionary)[species_id] = true
+
+#quest eval:
+func get_visible_quests(island_id: String) -> Array:
+	ensure_island_progress(island_id)
+	var order: Array = quest_order.get(island_id, [])
+	var idx := int(quest_state[island_id]["next_idx"])
+	var turned: Dictionary = quest_state[island_id]["turned_in"]
+	var out: Array = []
+	var i := idx
+	#prolly 3, but maybe 4
+	while i < order.size() and out.size() < MAX_ACTIVE_QUESTS:
+		var qid := str(order[i])
+		if not turned.has(qid):
+			out.append(qid)
+		i += 1
+	return out
+
+func is_quest_turned_in(island_id: String, qid: String) -> bool:
+	ensure_island_progress(island_id)
+	return (quest_state[island_id]["turned_in"] as Dictionary).has(qid)
+
+func is_quest_ready(island_id: String, qid: String) -> bool:
+	ensure_island_progress(island_id)
+	if is_quest_turned_in(island_id, qid):
+		return false
+	var def:Dictionary = quest_defs.get(qid, {})
+	var t := str(def.get("type",""))
+	var goal: Dictionary = def.get("goal",{})
+	var m: Dictionary = island_metrics[island_id]
+	match t:
+		"KILL":
+			return int(m.get("kills_total")) >= int(goal.get("count"))
+		"VISIT_ALL_DAY":
+			var visited: Dictionary = m.get("nodes_visited_today", {})
+			for n in goal.get("nodes", []):
+				if not visited.has(str(n)):
+					return false
+			return true
+		"FISH_UNIQUE":
+			var uniq: Dictionary = m.get("fish_unique_species", {})
+			return uniq.size() >= int(goal.get("count"))
+		_:
+			return false
+
+func turn_in_quest(island_id: String, qid: String) -> bool:
+	ensure_island_progress(island_id)
+	if not is_quest_ready(island_id, qid):
+		return false
+	#grant rewards later (currency & items?)
+	_grant_quest_rewards(qid)
+	#mark turned in
+	(quest_state[island_id]["turned_in"] as Dictionary)[qid] = true
+	#advance next_idx forward past any turned-in quests
+	_advance_quest_pointer(island_id)
+	return true
+
+func _advance_quest_pointer(island_id: String) -> void:
+	var order: Array = quest_order.get(island_id, [])
+	var idx := int(quest_state[island_id]["next_idx"])
+	var turned: Dictionary = quest_state[island_id]["turned_in"]
+	while idx<order.size() and turned.has(str(order[idx])):
+		idx +=1
+	quest_state[island_id]["next_idx"] = idx
+
+func _grant_quest_rewards(qid: String) -> void:
+	var def: Dictionary = quest_defs.get(qid, {})
+	var rewards: Dictionary = def.get("rewards", {})
+	#later: add gold/silver/items
+	#gold += int(rewards.get("gold"))

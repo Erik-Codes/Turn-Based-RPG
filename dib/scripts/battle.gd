@@ -459,6 +459,8 @@ func _on_unit_defeat(uid: int) -> void:
 	await animate_queue_death(uid)
 	#hide the handler content 
 	if slot_index != -1:
+		#testing the kill quest
+		GameState.record_kills(GameState.pending_battle["island_id"])
 		var handler: Control = enemy_handlers[slot_index]
 		handler.visible = false
 		#If there are more enemies to spawn, spawn immediately into that slot
