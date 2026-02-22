@@ -10,12 +10,11 @@ I thought of this project as a great way to learn **Godot and GDScript through r
 
 ---
 
-## Last Edit
-My most recent changes (2/18)
-- replaced party lineup slots w/ MonsterEntryButtons and refactored the code to just use the built-in setup
-- changed it so 1 press selects the monster (to view stats), and dragging is used to swap (dragging gives just the image of the monster)
-- made sure the 4th (locked) slot is unusable until MAX_PARTY_SIZE is changed down the line
-- added outline for quests to GameState (next)
+## Last Update
+My most recent changes (2/21)
+- Created a quest window in the village that displays 3 quests (with details and progress indicators)
+- Completion will reward the player and add a new quest to the list
+- For now, finishing up all of the quests will just fade the area, but later will be styled
 ---
 
 ## Overview
