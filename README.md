@@ -11,10 +11,13 @@ I thought of this project as a great way to learn **Godot and GDScript through r
 ---
 
 ## Last Update
-My most recent changes (2/21)
-- Created a quest window in the village that displays 3 quests (with details and progress indicators)
-- Completion will reward the player and add a new quest to the list
-- For now, finishing up all of the quests will just fade the area, but later will be styled
+My most recent changes (4/20)
+- added battle reward and level-up overlays
+- added enemy capture flow and capture tool selection
+- added quest progress/completion banners
+- added save/load and new game starter setup
+- added fishing, village, and encounter progression updates
+- created dialog and the starter intro
 ---
 
 ## Overview
@@ -89,6 +92,11 @@ The game features:
 
 ## Current Feature Set
 
+- Save/load system
+- Interactive fishing with reward chance (items vs enemy encounters)
+- Experience and leveling system
+- Expanded stat scaling
+- Quest log with manual turn-in
 - Persistent monster HP
 - Village healing reset
 - Temporary battle clearing system
@@ -102,14 +110,10 @@ The game features:
 
 ## Planned Features
 
-- Experience and leveling system
-- Expanded stat scaling
-- Quest log with manual turn-in
 - Town-specific shop inventories
-- Interactive fishing with reward chance (items vs enemy encounters)
 - Monster evolution system
 - Expanded multi-island world structure
-- Save/load system
+
 
 ---
 
