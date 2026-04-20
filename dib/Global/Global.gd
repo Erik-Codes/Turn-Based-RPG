@@ -18,6 +18,8 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 40,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 12,
+		'evolution': {'species': Monster.Test4, 'level': 5},
 	},
 	Monster.Test2: {
 		'name': 't2',
@@ -27,6 +29,8 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 41,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 13,
+		'evolution': {'species': Monster.Test5, 'level': 5},
 	},
 	Monster.Test3: {
 		'name': 't3',
@@ -36,6 +40,8 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 42,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 15,
+		'evolution': {'species': Monster.Test6, 'level': 6},
 	},
 	Monster.Test4: {
 		'name': 't4',
@@ -45,6 +51,7 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 43,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 17,
 	},
 	Monster.Test5: {
 		'name': 't5',
@@ -54,6 +61,7 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 44,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 18,
 	},
 	Monster.Test6: {
 		'name': 't6',
@@ -63,6 +71,7 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 45,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 20,
 	},
 	Monster.Test7: {
 		'name': 't7',
@@ -72,6 +81,7 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 46,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 18,
 	},
 	Monster.Test8: {
 		'name': 't8',
@@ -81,6 +91,7 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 47,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 18,
 	},
 	Monster.Test9: {
 		'name': 't9',
@@ -90,6 +101,7 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 48,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 14,
 	},
 	Monster.Test10: {
 		'name': 't10',
@@ -99,6 +111,8 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 49,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 16,
+		'evolution': {'species': Monster.Test13, 'level': 8},
 	},
 	Monster.Test11: {
 		'name': 't11',
@@ -108,6 +122,7 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 50,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 16,
 	},
 	Monster.Test12: {
 		'name': 't12',
@@ -117,6 +132,8 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 51,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 14,
+		'evolution': {'species': Monster.Test15, 'level': 10},
 	},
 	Monster.Test13: {
 		'name': 't13',
@@ -126,6 +143,7 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 52,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 24,
 	},
 	Monster.Test14: {
 		'name': 't14',
@@ -135,6 +153,7 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 53,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 12,
 	},
 	Monster.Test15: {
 		'name': 't15',
@@ -144,6 +163,7 @@ const monster_data: Dictionary[Monster, Dictionary] = {
 		'speed' : 55,
 		'atk': 10,
 		'def':10,
+		'exp_yield': 28,
 	},
 }
 #change from target 1/0 to TargetType
@@ -173,3 +193,6 @@ var encounter :Array = [Monster.Test6, Monster.Test10, Monster.Test4]
 #var encounter :Array = [Monster.Test15]
 
 var currentLocation : int = 1
+
+func get_monster_name(species_id: int) -> String:
+	return str(monster_data.get(species_id, {}).get("name", "Unknown"))

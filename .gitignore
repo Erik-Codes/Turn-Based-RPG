@@ -16,3 +16,5 @@ data_*/
 mono_crash.*.json
 #ignore graphics while I use license-limited sprites
 graphics/
+#upgraded to godot 4.6
+dib-(4.5)/

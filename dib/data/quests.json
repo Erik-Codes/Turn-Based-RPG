@@ -1,0 +1,21 @@
+{
+  "hearthbay": {
+	"order": ["HB_KILL_3", "HB_VISIT_ALL_DAY1", "HB_FISH_UNIQUE_3"],
+	"defs": {
+	  "HB_KILL_3": {
+		"title": "Thin the Wilds",
+		"desc": "Defeat 3 monsters.",
+		"type": "KILL",
+		"goal": { "count": 3 },
+		"rewards": { "gold": 30 }
+	  },
+	  "HB_VISIT_ALL_DAY1": {
+		"title": "Scout the Island",
+		"desc": "Visit every node in one day.",
+		"type": "VISIT_ALL_DAY",
+		"goal": { "nodes": ["town","node_3","node_4","node_2","node_5","node_6","fishing"] },
+		"rewards": { "gold": 60 }
+	  }
+	}
+  }
+}

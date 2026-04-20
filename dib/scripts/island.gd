@@ -1,5 +1,8 @@
 # IslandMap.gd
 extends Control
+
+const QuestBannerScene = preload("res://scenes/quest_banner.tscn")
+
 @export var island_id: String = "hearthbay"
 @onready var nodes_parent: Node = $MapRoot/Buttons
 @onready var player_marker: Control = $MapRoot/player
@@ -10,6 +13,7 @@ var _is_moving := false
 
 var _traveling := false
 var _zoom_tween: Tween
+var _quest_banner: QuestBanner
 
 #adjacency uses node_ids now; change to more intuitive
 @export var graph := {
@@ -27,7 +31,7 @@ var shown_nodes: Dictionary = {} #node_id -> true
 #(If your Button script has exported `node_type`, use that instead.)
 @export var node_types := {
 	"town": Global.LocationType.TOWN,
-	#"node_5": Global.LocationType.CAVE,
+	"node_5": Global.LocationType.CAVE,
 	"fishing": Global.LocationType.FISHING,
 }
 
@@ -41,6 +45,8 @@ var node_controls: Dictionary = {} #node_id -> holder Control
 #setup
 func _ready() -> void:
 	_reset_zoom()
+	_ensure_quest_banner()
+	GameState.mark_resume_scene(scene_file_path)
 	GameState.ensure_island(island_id)
 	#connect all nodes
 	for holder in nodes_parent.get_children():
@@ -70,8 +76,18 @@ func _ready() -> void:
 	for id in shown_nodes.keys():
 		GameState.discover(island_id, id)
 	_place_player_immediately(cur)
+	GameState.record_node_visited(island_id, cur)
 	_refresh_nodes()
 	GameState.set_shown(island_id, shown_nodes)
+
+func _ensure_quest_banner() -> void:
+	if _quest_banner == null:
+		_quest_banner = QuestBannerScene.instantiate() as QuestBanner
+		add_child(_quest_banner)
+
+func _show_quest_notices(notices: Array) -> void:
+	_ensure_quest_banner()
+	_quest_banner.enqueue_many(notices)
 
 #reset all when from town
 func reset_from_town():
@@ -99,6 +115,8 @@ func _on_node_chosen(node_id: String) -> void:
 	_hide_node_temporarily(node_id)
 	# Move to node
 	GameState.set_current(island_id, node_id)
+	var quest_notices := GameState.record_node_visited(island_id, node_id)
+	_show_quest_notices(quest_notices)
 	# Reveal this node + neighbors
 	GameState.discover(island_id, node_id)
 	_reveal_neighbors(node_id)
@@ -108,21 +126,18 @@ func _on_node_chosen(node_id: String) -> void:
 	var t := _get_node_type(node_id)
 	match t:
 		Global.LocationType.TOWN:
-			GameState.pending_battle["island_id"] = island_id
-			GameState.pending_battle["node_id"] = node_id
-			GameState.pending_battle["return_scene"] = scene_file_path
+			GameState.set_pending_battle(island_id, node_id, scene_file_path)
 			await _tween_player_to(node_id)
 			_refresh_nodes()
 			get_tree().change_scene_to_file("res://scenes/general_village.tscn")
 			return
 		Global.LocationType.CAVE:
+			GameState.set_pending_battle(island_id, node_id, scene_file_path)
 			GameState.set_return_source(island_id, "cave")
 			get_tree().change_scene_to_file("res://scenes/cave.tscn")
 			return
 		Global.LocationType.FISHING:
-			GameState.pending_battle["island_id"] = island_id
-			GameState.pending_battle["node_id"] = node_id
-			GameState.pending_battle["return_scene"] = scene_file_path
+			GameState.set_pending_battle(island_id, node_id, scene_file_path)
 			#maybe bigger zoom later, same w fishing
 			await _tween_player_to(node_id)
 			await get_tree().process_frame
@@ -136,7 +151,7 @@ func _on_node_chosen(node_id: String) -> void:
 	if st == Global.LocationStatus.DISCOVERED:
 		# decreasing chance with clears
 		var clears := GameState.get_node_clears(island_id, node_id)
-		var p = clamp(1.0 - 0.25 * float(clears), 0.15, 1.0)
+		var p := GameState.battle_chance_for_node(clears)
 		if randf() < p:
 			GameState.set_status(island_id, node_id, Global.LocationStatus.BATTLING)
 			_start_battle(node_id)
@@ -205,9 +220,8 @@ func _get_node_type(node_id: String) -> int:
 
 #trigger battle
 func _start_battle(node_id: String) -> void:
-	GameState.pending_battle["island_id"] = island_id
-	GameState.pending_battle["node_id"] = node_id
-	GameState.pending_battle["return_scene"] = scene_file_path
+	Global.encounter = GameState.build_random_encounter(island_id, node_id)
+	GameState.set_pending_battle(island_id, node_id, scene_file_path)
 	await travel_and_transition(node_id, "res://scenes/DIBBattle.tscn", 0.2, 1.6, 0.3, 0.14, 0.14)
 
 

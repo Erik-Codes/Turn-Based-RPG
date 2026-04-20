@@ -11,9 +11,10 @@ var selected_index := -1
 var selected_uid := -1
 
 func _ready() -> void:
-	selected_stats(GameState.party[0])
 	rebuild_lineup()
 	rebuild_roster()
+	if not GameState.party.is_empty():
+		selected_stats(GameState.party[0])
 
 
 func rebuild_lineup() -> void:
@@ -97,8 +98,23 @@ func _on_entry_dropped(sk: String, si: int, su: int, dk: String, di: int, du: in
 
 func selected_stats(uid: int):
 	var stats = GameState.compute_stats(uid)
+	if stats.is_empty():
+		return
 	$SelectedInfo/Icon.texture = load(stats["texture"])
-	$SelectedInfo/name.text = str(stats['name'])
-	$"SelectedInfo/right stats".text = str(stats['lvl'])+"\n"+str(stats['atk'])+"\n"+str(stats['def'])+"\n"+str(stats['spd'])
-	$SelectedInfo/left.text = "\nHP: "+str(stats['max_hp'])+"\nXP:\nItem Slots"
-	pass
+	$SelectedInfo/name.text = str(stats["name"])
+	$"SelectedInfo/right stats".text = "%s\n%s\n%s\n%s" % [
+		str(stats["lvl"]),
+		str(stats["atk"]),
+		str(stats["def"]),
+		str(stats["spd"]),
+	]
+	var evo_text := "Ready to evolve into %s" % str(stats["evolution_name"]) if bool(stats.get("can_evolve", false)) else "Next evo: %s" % str(stats.get("evolution_level", "--"))
+	if int(stats.get("evolution_level", -1)) == -1:
+		evo_text = "Evolution: none"
+	$SelectedInfo/left.text = "HP: %d/%d\nXP: %d/%d\n%s" % [
+		int(stats["current_hp"]),
+		int(stats["max_hp"]),
+		int(stats["exp"]),
+		int(stats["exp_to_next"]),
+		evo_text,
+	]

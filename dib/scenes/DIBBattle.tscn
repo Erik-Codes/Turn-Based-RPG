@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://vd5oggm7c0s4"]
+[gd_scene format=3 uid="uid://vd5oggm7c0s4"]
 
 [ext_resource type="Texture2D" uid="uid://c24bne26ligxm" path="res://graphics/test/test_bg2.png" id="1_areuc"]
 [ext_resource type="Script" uid="uid://bily50kop7iah" path="res://scripts/battle.gd" id="1_e3e7x"]
@@ -138,7 +138,7 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="DIBBattle" type="Control"]
+[node name="DIBBattle" type="Control" unique_id=361044491]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -147,7 +147,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_e3e7x")
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=279545948]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -155,7 +155,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BG" type="TextureRect" parent="Control"]
+[node name="BG" type="TextureRect" parent="Control" unique_id=2061652978]
 texture_filter = 4
 layout_mode = 1
 anchors_preset = 15
@@ -166,7 +166,7 @@ grow_vertical = 2
 texture = ExtResource("1_areuc")
 expand_mode = 1
 
-[node name="Turn_order_deaths" type="Control" parent="."]
+[node name="Turn_order_deaths" type="Control" parent="." unique_id=1267914122]
 layout_mode = 1
 anchor_left = 0.01
 anchor_top = 0.01
@@ -176,14 +176,14 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Turn_order" parent="." instance=ExtResource("6_mrgw0")]
+[node name="Turn_order" parent="." unique_id=1854314099 instance=ExtResource("6_mrgw0")]
 layout_mode = 1
 anchor_left = 0.01
 anchor_right = 0.12
 grow_horizontal = 1
 grow_vertical = 1
 
-[node name="Enemies" type="Control" parent="."]
+[node name="Enemies" type="Control" parent="." unique_id=482082488]
 layout_mode = 1
 anchor_left = 0.1
 anchor_right = 0.97
@@ -191,7 +191,7 @@ anchor_bottom = 0.65
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HB" type="Control" parent="Enemies"]
+[node name="HB" type="Control" parent="Enemies" unique_id=776186780]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -199,26 +199,26 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MonsterHandler" parent="Enemies/HB" instance=ExtResource("7_0x07f")]
+[node name="MonsterHandler" parent="Enemies/HB" unique_id=1022893391 instance=ExtResource("7_0x07f")]
 layout_mode = 1
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 
-[node name="MonsterHandler2" parent="Enemies/HB" instance=ExtResource("7_0x07f")]
+[node name="MonsterHandler2" parent="Enemies/HB" unique_id=1297785359 instance=ExtResource("7_0x07f")]
 layout_mode = 1
 anchor_left = 0.4
 anchor_right = 0.7
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 
-[node name="MonsterHandler3" parent="Enemies/HB" instance=ExtResource("7_0x07f")]
+[node name="MonsterHandler3" parent="Enemies/HB" unique_id=1568163991 instance=ExtResource("7_0x07f")]
 layout_mode = 1
 anchor_left = 0.7
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 
-[node name="PlayerAttack" type="Control" parent="."]
+[node name="PlayerAttack" type="Control" parent="." unique_id=997319938]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -227,7 +227,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Control" type="Control" parent="PlayerAttack"]
+[node name="Control" type="Control" parent="PlayerAttack" unique_id=237221058]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -238,7 +238,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="PlayerAttack/Control"]
+[node name="TextureRect" type="TextureRect" parent="PlayerAttack/Control" unique_id=383228066]
 visible = false
 modulate = Color(1, 1, 1, 255)
 custom_minimum_size = Vector2(150, 150)
@@ -257,12 +257,10 @@ scale = Vector2(0.5, 0.5)
 texture = SubResource("AtlasTexture_areuc")
 stretch_mode = 3
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerAttack"]
-libraries = {
-&"": SubResource("AnimationLibrary_e2sf1")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerAttack" unique_id=35861627]
+libraries/ = SubResource("AnimationLibrary_e2sf1")
 
-[node name="UiFrame" type="Control" parent="."]
+[node name="UiFrame" type="Control" parent="." unique_id=1928659747]
 layout_mode = 1
 anchor_top = 0.65
 anchor_right = 1.0
@@ -270,12 +268,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="UiFrame"]
+[node name="Control" type="Control" parent="UiFrame" unique_id=44483139]
 layout_mode = 1
 anchor_right = 0.201
 anchor_bottom = 1.0
 
-[node name="TextureRect" type="TextureRect" parent="UiFrame/Control"]
+[node name="TextureRect" type="TextureRect" parent="UiFrame/Control" unique_id=1757408701]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -285,7 +283,7 @@ grow_vertical = 2
 texture = ExtResource("9_pjx7w")
 expand_mode = 1
 
-[node name="ui9" type="TextureRect" parent="UiFrame/Control"]
+[node name="ui9" type="TextureRect" parent="UiFrame/Control" unique_id=1301742138]
 modulate = Color(1, 1, 1, 0.5294118)
 texture_filter = 1
 layout_mode = 1
@@ -298,13 +296,13 @@ texture = ExtResource("11_qiyie")
 expand_mode = 1
 stretch_mode = 3
 
-[node name="Control2" type="Control" parent="UiFrame"]
+[node name="Control2" type="Control" parent="UiFrame" unique_id=1509723856]
 layout_mode = 1
 anchor_left = 0.2
 anchor_right = 0.4
 anchor_bottom = 1.0
 
-[node name="ui2" type="TextureRect" parent="UiFrame/Control2"]
+[node name="ui2" type="TextureRect" parent="UiFrame/Control2" unique_id=2025833729]
 texture_filter = 1
 layout_mode = 1
 anchors_preset = 15
@@ -315,13 +313,13 @@ grow_vertical = 2
 texture = ExtResource("6_pjx7w")
 expand_mode = 1
 
-[node name="Control3" type="Control" parent="UiFrame"]
+[node name="Control3" type="Control" parent="UiFrame" unique_id=746398605]
 layout_mode = 1
 anchor_left = 0.4
 anchor_right = 0.6
 anchor_bottom = 1.0
 
-[node name="ui3" type="TextureRect" parent="UiFrame/Control3"]
+[node name="ui3" type="TextureRect" parent="UiFrame/Control3" unique_id=844133475]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -332,13 +330,13 @@ texture = ExtResource("7_6qnt1")
 expand_mode = 1
 flip_h = true
 
-[node name="Control4" type="Control" parent="UiFrame"]
+[node name="Control4" type="Control" parent="UiFrame" unique_id=459021233]
 layout_mode = 1
 anchor_left = 0.6
 anchor_right = 0.8
 anchor_bottom = 1.0
 
-[node name="ui4" type="TextureRect" parent="UiFrame/Control4"]
+[node name="ui4" type="TextureRect" parent="UiFrame/Control4" unique_id=403974380]
 texture_filter = 1
 layout_mode = 1
 anchors_preset = 15
@@ -349,13 +347,13 @@ grow_vertical = 2
 texture = ExtResource("8_6qnt1")
 expand_mode = 1
 
-[node name="Control5" type="Control" parent="UiFrame"]
+[node name="Control5" type="Control" parent="UiFrame" unique_id=1571230900]
 layout_mode = 1
 anchor_left = 0.798
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="ui5" type="TextureRect" parent="UiFrame/Control5"]
+[node name="ui5" type="TextureRect" parent="UiFrame/Control5" unique_id=1660221999]
 texture_filter = 1
 layout_mode = 1
 anchors_preset = -1
@@ -366,7 +364,7 @@ grow_vertical = 2
 texture = ExtResource("9_6qnt1")
 expand_mode = 1
 
-[node name="ColorRect" type="Button" parent="UiFrame/Control5"]
+[node name="ColorRect" type="Button" parent="UiFrame/Control5" unique_id=309830421]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -379,13 +377,13 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_aofla")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_wx2n4")
 theme_override_styles/focus = SubResource("StyleBoxFlat_8yoni")
 
-[node name="Players" type="Control" parent="."]
+[node name="Players" type="Control" parent="." unique_id=752055575]
 layout_mode = 1
 anchor_top = 0.65
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="HB" type="Control" parent="Players"]
+[node name="HB" type="Control" parent="Players" unique_id=266480552]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -393,13 +391,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="Players/HB"]
+[node name="Control" type="Control" parent="Players/HB" unique_id=1948748764]
 layout_mode = 1
 anchor_right = 0.2
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 
-[node name="ColorRect" type="ColorRect" parent="Players/HB/Control"]
+[node name="ColorRect" type="ColorRect" parent="Players/HB/Control" unique_id=1817014498]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -411,7 +409,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.44705883, 0.44705883, 0.44705883, 0.5254902)
 
-[node name="Control" type="Control" parent="Players/HB/Control"]
+[node name="Control" type="Control" parent="Players/HB/Control" unique_id=1919382325]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -422,11 +420,11 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="Players/HB/Control/Control"]
+[node name="Sprite2D" type="Sprite2D" parent="Players/HB/Control/Control" unique_id=75564768]
 modulate = Color(0.003921569, 0.003921569, 0.003921569, 0.6627451)
 texture = ExtResource("7_pxbuf")
 
-[node name="Label" type="Label" parent="Players/HB/Control/Control"]
+[node name="Label" type="Label" parent="Players/HB/Control/Control" unique_id=834353386]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -447,27 +445,27 @@ theme_override_fonts/font = ExtResource("8_pxbuf")
 theme_override_font_sizes/font_size = 33
 text = "LOCKED"
 
-[node name="PlayerHandler1" parent="Players/HB" instance=ExtResource("8_t8jgi")]
+[node name="PlayerHandler1" parent="Players/HB" unique_id=883809927 instance=ExtResource("8_t8jgi")]
 layout_mode = 1
 anchor_top = 0.0
 offset_bottom = 0.9999695
 size_flags_horizontal = 3
 
-[node name="PlayerHandler0" parent="Players/HB" instance=ExtResource("8_t8jgi")]
+[node name="PlayerHandler0" parent="Players/HB" unique_id=1868440910 instance=ExtResource("8_t8jgi")]
 layout_mode = 1
 anchor_left = 0.4
 anchor_top = 0.0
 anchor_right = 0.6
 size_flags_horizontal = 3
 
-[node name="PlayerHandler2" parent="Players/HB" instance=ExtResource("8_t8jgi")]
+[node name="PlayerHandler2" parent="Players/HB" unique_id=59507788 instance=ExtResource("8_t8jgi")]
 layout_mode = 1
 anchor_left = 0.6
 anchor_top = 0.0
 anchor_right = 0.8
 size_flags_horizontal = 3
 
-[node name="PlayerHandler3" parent="Players/HB" instance=ExtResource("8_t8jgi")]
+[node name="PlayerHandler3" parent="Players/HB" unique_id=1048461909 instance=ExtResource("8_t8jgi")]
 visible = false
 layout_mode = 1
 anchor_left = 0.8
@@ -476,14 +474,14 @@ anchor_right = 1.0
 rotation = 0.33684856
 size_flags_horizontal = 3
 
-[node name="Control2" type="Control" parent="Players/HB"]
+[node name="Control2" type="Control" parent="Players/HB" unique_id=941315701]
 anchors_preset = 0
 offset_left = 1027.0
 offset_right = 1280.0
 offset_bottom = 252.0
 size_flags_horizontal = 3
 
-[node name="CurrentPlayer3" type="Control" parent="Players"]
+[node name="CurrentPlayer3" type="Control" parent="Players" unique_id=419701392]
 layout_mode = 1
 anchor_left = 0.8
 anchor_right = 1.0
@@ -491,20 +489,32 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CurrentPlayer" type="Control" parent="."]
+[node name="CurrentPlayer" type="Control" parent="." unique_id=724367197]
 layout_mode = 1
 anchor_top = 0.65
 anchor_right = 0.2
 anchor_bottom = 1.0
 grow_vertical = 0
 
-[node name="battle menu" parent="." instance=ExtResource("5_t8jgi")]
+[node name="CaptureButton" type="Button" parent="." unique_id=284830669]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.9
+anchor_top = 0.6
+anchor_right = 1.0
+anchor_bottom = 0.65
+grow_horizontal = 0
+grow_vertical = 0
+text = "Capture"
+
+[node name="battle menu" parent="." unique_id=213824198 instance=ExtResource("5_t8jgi")]
 visible = false
 layout_mode = 1
 anchors_preset = -1
 mouse_filter = 2
 
-[node name="TapOverlayLabel" type="Label" parent="."]
+[node name="TapOverlayLabel" type="Label" parent="." unique_id=49602704]
 visible = false
 layout_mode = 0
 offset_left = 473.0
@@ -515,9 +525,9 @@ theme_override_colors/font_color = Color(0.82962954, 0.24022678, 0.36504403, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 18
 theme_override_font_sizes/font_size = 40
-text = "TAP YOUR SELCTION"
+text = "TAP YOUR SELECTION"
 
-[node name="EnemiesRemaining" type="Label" parent="."]
+[node name="EnemiesRemaining" type="Label" parent="." unique_id=1528869844]
 visible = false
 layout_mode = 1
 anchors_preset = 1
@@ -531,4 +541,5 @@ theme_override_constants/outline_size = 15
 theme_override_font_sizes/font_size = 50
 text = "test"
 
+[connection signal="pressed" from="CaptureButton" to="." method="_on_capture_button_pressed"]
 [connection signal="selected" from="battle menu" to="." method="_on_battle_menu_selected"]

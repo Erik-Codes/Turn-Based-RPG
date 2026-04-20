@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cfq3hlmfu074d"]
+[gd_scene format=3 uid="uid://cfq3hlmfu074d"]
 
 [ext_resource type="Script" uid="uid://br43iptci786u" path="res://scripts/home_screen.gd" id="1_lapbl"]
 
-[node name="HomeScreen" type="Control"]
+[node name="HomeScreen" type="Control" unique_id=1664960713]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lapbl")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=604533059]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -21,14 +21,24 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="NewGame" type="Button" parent="VBoxContainer"]
+[node name="NewGame" type="Button" parent="VBoxContainer" unique_id=95353972]
 layout_mode = 2
 text = "New Game"
 
-[node name="Button2" type="Button" parent="VBoxContainer"]
+[node name="ContinueGame" type="Button" parent="VBoxContainer" unique_id=64523540]
 layout_mode = 2
+text = "Continue"
 
-[node name="Button3" type="Button" parent="VBoxContainer"]
+[node name="Quit" type="Button" parent="VBoxContainer" unique_id=2012705756]
 layout_mode = 2
+text = "Quit"
+
+[node name="InfoLabel" type="Label" parent="VBoxContainer" unique_id=1376836172]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "No save found yet. Start a new run to create one."
+horizontal_alignment = 1
 
 [connection signal="pressed" from="VBoxContainer/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="VBoxContainer/ContinueGame" to="." method="_on_continue_game_pressed"]
+[connection signal="pressed" from="VBoxContainer/Quit" to="." method="_on_quit_pressed"]

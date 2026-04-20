@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://b1juxufff16c5"]
+
+[ext_resource type="Script" uid="uid://c0rexdeilj6vd" path="res://scripts/capture_overlay.gd" id="1_capture"]
+
+[node name="CaptureOverlay" type="Control" unique_id=1794354291]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_capture")
+
+[node name="Dim" type="ColorRect" parent="." unique_id=99200275]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.45)
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1065535463]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -160.0
+offset_right = 250.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=2092466172]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=1307299645]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=694029070]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Capture"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=786699276]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Choose a capture tool."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Options" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1275371733]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="NetButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/Options" unique_id=769615128]
+layout_mode = 2
+text = "Reed Net"
+
+[node name="SigilButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/Options" unique_id=1444055285]
+layout_mode = 2
+text = "Binding Sigil"
+
+[node name="PrismButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/Options" unique_id=1465027036]
+layout_mode = 2
+text = "Royal Prism"
+
+[node name="CancelButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1132780807]
+layout_mode = 2
+text = "Cancel"
+
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Options/NetButton" to="." method="_on_net_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Options/SigilButton" to="." method="_on_sigil_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Options/PrismButton" to="." method="_on_prism_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/CancelButton" to="." method="_on_cancel_button_pressed"]

@@ -2,7 +2,15 @@ extends Control
 
 enum TargetMode {NONE, ENEMY, ALLY, SELF, CAPTURE}
 
+const BattleRewardsOverlayScene = preload("res://scenes/battle_rewards_overlay.tscn")
+const LevelUpOverlayScene = preload("res://scenes/level_up_overlay.tscn")
+const QuestBannerScene = preload("res://scenes/quest_banner.tscn")
+const CaptureOverlayScene = preload("res://scenes/capture_overlay.tscn")
+const CAPTURE_ACTION_COST := 58.0
+
 var pending_attack: Global.Attack = -1
+var pending_capture_option := ""
+var pending_capture_target_uid: int = -1
 var target_mode: TargetMode = TargetMode.NONE
 var selected_target_uid: int = -1
 
@@ -30,6 +38,11 @@ var _dying_uids: Dictionary = {} #uid -> true (use Dictionary as a set)
 var _queue_hp_tweens: Dictionary = {} #uid -> Tween
 
 var _busy_count: int = 0
+var _battle_finishing := false
+var _rewards_overlay: BattleRewardsOverlay
+var _level_up_overlay: LevelUpOverlay
+var _quest_banner: QuestBanner
+var _capture_overlay: CaptureOverlay
 signal battle_idle
 
 #prevent certain actions (e.g. starting turns too early)
@@ -59,6 +72,8 @@ func _ready():
 	_uid_to_handler.clear()
 	_uid_to_stats.clear()
 	_enemy_entries.clear()
+	_battle_finishing = false
+	_ensure_reward_overlays()
 	$"battle menu".hide()
 	$Turn_order.hide()
 	player_setup()
@@ -71,6 +86,57 @@ func _ready():
 	update_remaining()
 	connect_swipes()
 	start_next_turn()
+
+func _ensure_reward_overlays() -> void:
+	if _rewards_overlay == null:
+		_rewards_overlay = BattleRewardsOverlayScene.instantiate() as BattleRewardsOverlay
+		add_child(_rewards_overlay)
+	if _level_up_overlay == null:
+		_level_up_overlay = LevelUpOverlayScene.instantiate() as LevelUpOverlay
+		add_child(_level_up_overlay)
+	if _quest_banner == null:
+		_quest_banner = QuestBannerScene.instantiate() as QuestBanner
+		add_child(_quest_banner)
+	if _capture_overlay == null:
+		_capture_overlay = CaptureOverlayScene.instantiate() as CaptureOverlay
+		add_child(_capture_overlay)
+		if not _capture_overlay.option_selected.is_connected(_on_capture_option_selected):
+			_capture_overlay.option_selected.connect(_on_capture_option_selected)
+		if not _capture_overlay.canceled.is_connected(_on_capture_canceled):
+			_capture_overlay.canceled.connect(_on_capture_canceled)
+
+func _show_quest_notices(notices: Array) -> void:
+	_ensure_reward_overlays()
+	_quest_banner.enqueue_many(notices)
+
+func _refresh_capture_button() -> void:
+	var can_show := not _battle_finishing and current_entry.size() > 0 and not bool(current_entry.get("is_enemy", true)) and _has_alive_enemies()
+	$CaptureButton.visible = can_show and target_mode == TargetMode.NONE
+	for stats in _uid_to_stats.values():
+		if stats != null and not stats.is_player and stats.has_method("set_capture_available"):
+			stats.set_capture_available(can_show and target_mode == TargetMode.CAPTURE)
+
+func _show_capture_feedback(message: String) -> void:
+	$TapOverlayLabel.text = message
+	$TapOverlayLabel.show()
+	await get_tree().create_timer(0.9).timeout
+	if target_mode == TargetMode.NONE:
+		$TapOverlayLabel.hide()
+
+func _finish_player_action_with_cost(cost: float, auto_advance := true) -> void:
+	timeline.commit(current_entry, cost)
+	current_entry = {}
+	target_mode = TargetMode.NONE
+	pending_attack = -1
+	pending_capture_option = ""
+	pending_capture_target_uid = -1
+	$TapOverlayLabel.hide()
+	_refresh_capture_button()
+	_animate_turn_order_to_new_state()
+	await get_tree().create_timer(0.7).timeout
+	await _wait_until_idle()
+	if auto_advance and not _battle_finishing:
+		call_deferred("start_next_turn")
 
 func player_setup():
 	#Reset all 4 slots to empty
@@ -185,6 +251,8 @@ func _spawn_enemy_visual_only(slot_index: int, monster_id: int) -> void:
 		stats.defeat.connect(_on_unit_defeat)
 	if not stats.hp_changed.is_connected(_on_hp_changed):
 		stats.hp_changed.connect(_on_hp_changed)
+	if stats.has_signal("capture_pressed") and not stats.is_connected("capture_pressed", Callable(self, "_on_enemy_capture_pressed")):
+		stats.connect("capture_pressed", Callable(self, "_on_enemy_capture_pressed"))
 	handler.show()
 	_enemy_entries.append({
 		"uid": uid,
@@ -261,13 +329,16 @@ func _queue_target_pos(index: int) -> Vector2:
 
 func _on_target_tapped(target_uid: int) -> void:
 	#Only allow tapping while targeting an enemy
-	if target_mode != TargetMode.ENEMY:
+	if target_mode != TargetMode.ENEMY and target_mode != TargetMode.CAPTURE:
 		return
-	if pending_attack == -1:
+	if target_mode == TargetMode.ENEMY and pending_attack == -1:
 		return
 	if not _uid_to_handler.has(target_uid):
 		return
 	if not (_uid_to_handler[target_uid] as Control).visible:
+		return
+	if target_mode == TargetMode.CAPTURE:
+		_open_capture_overlay_for_target(target_uid)
 		return
 	#Apply attack to that exact enemy
 	perform_attack_on_uid(target_uid, pending_attack)
@@ -301,6 +372,9 @@ func _animate_queue_hp(uid: int, hp: float, max_hp: float) -> void:
 
 
 func start_next_turn():
+	if _battle_finishing:
+		return
+	_refresh_capture_button()
 	await _wait_until_idle()
 	if not _has_alive_enemies():
 		return
@@ -330,13 +404,16 @@ func start_next_turn():
 		call_deferred("start_next_turn")
 		return
 	#Player turn
-	Global.current_monster = current_entry.get("monster_uid", -1); 
-	$PlayerAttack/Control/TextureRect.texture = load(Global.monster_data[Global.current_monster]['texture'])
+	var current_monster_uid := int(current_entry.get("monster_uid", -1))
+	var player_monster: Dictionary = GameState.get_monster(current_monster_uid)
+	Global.current_monster = int(player_monster.get("species", Global.Monster.Test1))
+	$PlayerAttack/Control/TextureRect.texture = load(Global.monster_data[Global.current_monster]["texture"])
 	show_current_player_box()
 	$"battle menu".current_state = Global.State.ATTACK
 	$"battle menu".refresh()
-	$"battle menu".current_monst = int(current_entry.get("monster_uid", -1))
+	$"battle menu".current_monst = Global.current_monster
 	$"battle menu".current_state = Global.State.ATTACK
+	_refresh_capture_button()
 
 func order_update():
 	for i in range(len(Global.encounter)):
@@ -370,14 +447,101 @@ func _on_battle_menu_selected(state, type):
 	$"battle menu".hide()
 	$TapOverlayLabel.show()
 
-func _end_player_action(atk: Global.Attack) -> void:
-	timeline.commit(current_entry, action_cost(current_entry, atk))
-	current_entry = {}
+func _on_capture_button_pressed() -> void:
+	if _battle_finishing or current_entry.is_empty() or bool(current_entry.get("is_enemy", true)):
+		return
+	pending_capture_option = ""
+	pending_capture_target_uid = -1
+	target_mode = TargetMode.CAPTURE
+	$"battle menu".hide()
+	$TapOverlayLabel.text = "Select a target to capture"
+	$TapOverlayLabel.show()
+	_refresh_capture_button()
+
+func _on_enemy_capture_pressed(target_uid: int) -> void:
+	if _battle_finishing or current_entry.is_empty() or bool(current_entry.get("is_enemy", true)):
+		return
+	if target_mode != TargetMode.CAPTURE:
+		return
+	_open_capture_overlay_for_target(target_uid)
+
+func _open_capture_overlay_for_target(target_uid: int) -> void:
+	if not _uid_to_stats.has(target_uid):
+		return
+	var stats = _uid_to_stats.get(target_uid, null)
+	if stats == null or stats.is_player or stats.get_hp() <= 0.0:
+		return
+	pending_capture_target_uid = target_uid
+	pending_capture_option = ""
+	_ensure_reward_overlays()
+	$TapOverlayLabel.hide()
+	_refresh_capture_button()
+	_capture_overlay.open_for_target(
+		Global.get_monster_name(int(stats.monster_id)),
+		int(stats.monster_id),
+		stats.get_hp(),
+		stats.get_max_hp()
+	)
+
+func _on_capture_option_selected(option_id: String) -> void:
+	pending_capture_option = option_id
+	if pending_capture_target_uid == -1:
+		pending_capture_option = ""
+		target_mode = TargetMode.NONE
+		$TapOverlayLabel.hide()
+		$"battle menu".show()
+		_refresh_capture_button()
+		return
+	await _attempt_capture(pending_capture_target_uid, option_id)
+
+func _on_capture_canceled() -> void:
+	pending_capture_option = ""
+	pending_capture_target_uid = -1
 	target_mode = TargetMode.NONE
-	_animate_turn_order_to_new_state()
-	await get_tree().create_timer(0.7).timeout
-	await _wait_until_idle()
-	call_deferred("start_next_turn")
+	$TapOverlayLabel.hide()
+	$"battle menu".show()
+	_refresh_capture_button()
+
+func _capture_fail_queue_cost() -> float:
+	var furthest_time := 0.0
+	for entry in timeline.queue:
+		furthest_time = max(furthest_time, float(entry.get("time_left", 0.0)))
+	return furthest_time + 1.0
+
+func _attempt_capture(target_uid: int, option_id: String) -> void:
+	if not _uid_to_stats.has(target_uid):
+		return
+	var stats = _uid_to_stats[target_uid]
+	pending_capture_target_uid = target_uid
+	var spend_result: Dictionary = GameState.try_spend_capture_option(option_id)
+	if not bool(spend_result.get("success", false)):
+		target_mode = TargetMode.NONE
+		pending_capture_option = ""
+		pending_capture_target_uid = -1
+		$TapOverlayLabel.hide()
+		await _show_capture_feedback(str(spend_result.get("message", "Capture failed.")))
+		$"battle menu".show()
+		_refresh_capture_button()
+		return
+	var species_id := int(stats.monster_id)
+	var chance := GameState.capture_chance_for_monster(species_id, stats.get_hp(), stats.get_max_hp(), option_id)
+	var success := randf() <= chance
+	if success:
+		var capture_level := GameState.get_capture_level_for_species(species_id)
+		var captured_uid := GameState.new_monster(species_id, capture_level)
+		var capture_name := str(GameState.get_monster(captured_uid).get("name", Global.get_monster_name(species_id)))
+		await _show_capture_feedback("%s captured!" % capture_name)
+		await _finish_player_action_with_cost(CAPTURE_ACTION_COST, false)
+		if not _battle_finishing:
+			await _remove_enemy_from_battle(target_uid, true)
+		if not _battle_finishing:
+			call_deferred("start_next_turn")
+	else:
+		await _show_capture_feedback("%s broke free!" % Global.get_monster_name(species_id))
+		await _finish_player_action_with_cost(_capture_fail_queue_cost())
+
+func _end_player_action(atk: Global.Attack) -> void:
+	await _finish_player_action_with_cost(action_cost(current_entry, atk))
 
 
 
@@ -453,14 +617,15 @@ func _on_unit_defeat(uid: int) -> void:
 	#animate queue death 
 	if slot_index == -1 and get_alive_player_handlers() == 0:
 		_end_busy()
-		finish_battle(false)
+		await finish_battle(false)
 		return
 	await get_tree().create_timer(0.4).timeout
 	await animate_queue_death(uid)
 	#hide the handler content 
 	if slot_index != -1:
 		#testing the kill quest
-		GameState.record_kills(GameState.pending_battle["island_id"])
+		var quest_notices := GameState.record_kills(GameState.pending_battle["island_id"])
+		_show_quest_notices(quest_notices)
 		var handler: Control = enemy_handlers[slot_index]
 		handler.visible = false
 		#If there are more enemies to spawn, spawn immediately into that slot
@@ -476,8 +641,42 @@ func _on_unit_defeat(uid: int) -> void:
 		#No more enemies to spawn: if none alive, win
 		if not _has_alive_enemies():
 			_end_busy()
-			finish_battle(true)
+			await finish_battle(true)
 			return
+	_end_busy()
+
+func _remove_enemy_from_battle(uid: int, counts_as_kill: bool) -> void:
+	_begin_busy()
+	var slot_index := -1
+	if _uid_to_stats.has(uid):
+		slot_index = int(_uid_to_stats[uid].slot_index)
+	if slot_index == -1:
+		_end_busy()
+		return
+	if current_entry and int(current_entry.get("uid", -1)) == uid:
+		current_entry = {}
+	timeline.remove_uid(uid)
+	_uid_to_handler.erase(uid)
+	_uid_to_stats.erase(uid)
+	await animate_queue_death(uid)
+	if counts_as_kill:
+		var notices := GameState.record_kills(GameState.pending_battle["island_id"])
+		_show_quest_notices(notices)
+	var handler: Control = enemy_handlers[slot_index]
+	handler.visible = false
+	if _has_enemies_remaining_to_spawn():
+		await get_tree().create_timer(0.2).timeout
+		var next_id: int = enemy_roster[next_enemy_idx]
+		next_enemy_idx += 1
+		update_remaining()
+		await spawn_enemy_into_slot(slot_index, next_id)
+		_animate_turn_order_to_new_state()
+		_end_busy()
+		return
+	if not _has_alive_enemies():
+		_end_busy()
+		await finish_battle(true)
+		return
 	_end_busy()
 
 func get_alive_player_handlers() -> int:
@@ -577,6 +776,8 @@ func spawn_enemy_into_slot(slot_index: int, monster_id: int) -> void:
 		stats.defeat.connect(_on_unit_defeat)
 	if not stats.hp_changed.is_connected(_on_hp_changed):
 		stats.hp_changed.connect(_on_hp_changed)
+	if stats.has_signal("capture_pressed") and not stats.is_connected("capture_pressed", Callable(self, "_on_enemy_capture_pressed")):
+		stats.connect("capture_pressed", Callable(self, "_on_enemy_capture_pressed"))
 	#Set drop-in
 	var hover: HoverAnim = handler.get_node("Control/HoverRoot") as HoverAnim
 	hover.stop_hover()
@@ -795,24 +996,44 @@ func _filter_not_dying(arr: Array[int]) -> Array[int]:
 			out.append(u)
 	return out
 
+func _show_reward_sequence(reward_summary: Dictionary) -> void:
+	_ensure_reward_overlays()
+	_rewards_overlay.show_rewards(reward_summary)
+	await _rewards_overlay.closed
+	var level_summaries: Array = []
+	for reward in reward_summary.get("summaries", []):
+		if int(reward.get("levels_gained", 0)) > 0:
+			level_summaries.append(reward)
+	if level_summaries.is_empty():
+		return
+	if _level_up_overlay.show_level_ups(level_summaries):
+		await _level_up_overlay.closed
+
 
 func finish_battle(player_won: bool) -> void:
+	if _battle_finishing:
+		return
+	_battle_finishing = true
 	var island_id = GameState.pending_battle["island_id"]
 	var node_id = GameState.pending_battle["node_id"]
-	var return_scene = GameState.pending_battle["return_scene"]
+	var return_scene = str(GameState.pending_battle["return_scene"])
+	if return_scene.is_empty():
+		return_scene = GameState.get_island_return_scene()
 
 	if player_won:
-		#GameState.inc_node_clears(island_id, node_id) # add this back later
+		GameState.inc_node_clears(island_id, node_id)
+		var reward_summary := GameState.award_battle_rewards(enemy_roster)
 		GameState.set_status(
 			island_id,
 			node_id,
 			Global.LocationStatus.TEMP_FREED
 		)
-		#clear pending battle
-		GameState.pending_battle.clear()
+		GameState.save_game()
+		await _show_reward_sequence(reward_summary)
 		get_tree().change_scene_to_file(return_scene)
 	else:
 		#put it back to DISCOVERED so it can be fought again
 		GameState.set_status(island_id, node_id, Global.LocationStatus.DISCOVERED)
 		GameState.set_current(island_id, "town")
+		GameState.save_game()
 		get_tree().change_scene_to_file("res://scenes/general_village.tscn")

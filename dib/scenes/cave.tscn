@@ -1,0 +1,79 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/cave.gd" id="1_cave"]
+[ext_resource type="PackedScene" path="res://scenes/dialogue_box.tscn" id="2_dialogue"]
+
+[node name="Cave" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cave")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.117647, 0.129412, 0.168627, 1)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.34
+anchor_top = 0.12
+anchor_right = 0.66
+anchor_bottom = 0.2
+theme_override_font_sizes/font_size = 34
+text = "Cliffside Cave"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.18
+anchor_top = 0.24
+anchor_right = 0.82
+anchor_bottom = 0.36
+theme_override_font_sizes/font_size = 24
+text = "A damp tunnel opens below the cliff path."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ExploreButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.38
+anchor_top = 0.46
+anchor_right = 0.62
+anchor_bottom = 0.55
+text = "Explore deeper"
+
+[node name="SearchButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.38
+anchor_top = 0.58
+anchor_right = 0.62
+anchor_bottom = 0.67
+text = "Search the walls"
+
+[node name="LeaveButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.38
+anchor_top = 0.7
+anchor_right = 0.62
+anchor_bottom = 0.79
+text = "Leave cave"
+
+[node name="DialogueBox" parent="." instance=ExtResource("2_dialogue")]
+layout_mode = 1
+
+[connection signal="pressed" from="ExploreButton" to="." method="_on_explore_button_pressed"]
+[connection signal="pressed" from="SearchButton" to="." method="_on_search_button_pressed"]
+[connection signal="pressed" from="LeaveButton" to="." method="_on_leave_button_pressed"]
